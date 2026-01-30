@@ -608,6 +608,104 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@biomejs/biome@npm:^2.3.13":
+  version: 2.3.13
+  resolution: "@biomejs/biome@npm:2.3.13"
+  dependencies:
+    "@biomejs/cli-darwin-arm64": "npm:2.3.13"
+    "@biomejs/cli-darwin-x64": "npm:2.3.13"
+    "@biomejs/cli-linux-arm64": "npm:2.3.13"
+    "@biomejs/cli-linux-arm64-musl": "npm:2.3.13"
+    "@biomejs/cli-linux-x64": "npm:2.3.13"
+    "@biomejs/cli-linux-x64-musl": "npm:2.3.13"
+    "@biomejs/cli-win32-arm64": "npm:2.3.13"
+    "@biomejs/cli-win32-x64": "npm:2.3.13"
+  dependenciesMeta:
+    "@biomejs/cli-darwin-arm64":
+      optional: true
+    "@biomejs/cli-darwin-x64":
+      optional: true
+    "@biomejs/cli-linux-arm64":
+      optional: true
+    "@biomejs/cli-linux-arm64-musl":
+      optional: true
+    "@biomejs/cli-linux-x64":
+      optional: true
+    "@biomejs/cli-linux-x64-musl":
+      optional: true
+    "@biomejs/cli-win32-arm64":
+      optional: true
+    "@biomejs/cli-win32-x64":
+      optional: true
+  bin:
+    biome: bin/biome
+  checksum: 10c0/920c44c755ab8efa2114b441baf74b8f5fae8e6ad98a301ce02228f546d20ef6ab7c33b990b0a4acd1ffc8f5985ae839cf1fec59a6f169732a0f86c14308728b
+  languageName: node
+  linkType: hard
+
+"@biomejs/cli-darwin-arm64@npm:2.3.13":
+  version: 2.3.13
+  resolution: "@biomejs/cli-darwin-arm64@npm:2.3.13"
+  conditions: os=darwin & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@biomejs/cli-darwin-x64@npm:2.3.13":
+  version: 2.3.13
+  resolution: "@biomejs/cli-darwin-x64@npm:2.3.13"
+  conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@biomejs/cli-linux-arm64-musl@npm:2.3.13":
+  version: 2.3.13
+  resolution: "@biomejs/cli-linux-arm64-musl@npm:2.3.13"
+  conditions: os=linux & cpu=arm64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@biomejs/cli-linux-arm64@npm:2.3.13":
+  version: 2.3.13
+  resolution: "@biomejs/cli-linux-arm64@npm:2.3.13"
+  conditions: os=linux & cpu=arm64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@biomejs/cli-linux-x64-musl@npm:2.3.13":
+  version: 2.3.13
+  resolution: "@biomejs/cli-linux-x64-musl@npm:2.3.13"
+  conditions: os=linux & cpu=x64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@biomejs/cli-linux-x64@npm:2.3.13":
+  version: 2.3.13
+  resolution: "@biomejs/cli-linux-x64@npm:2.3.13"
+  conditions: os=linux & cpu=x64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@biomejs/cli-win32-arm64@npm:2.3.13":
+  version: 2.3.13
+  resolution: "@biomejs/cli-win32-arm64@npm:2.3.13"
+  conditions: os=win32 & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@biomejs/cli-win32-x64@npm:2.3.13":
+  version: 2.3.13
+  resolution: "@biomejs/cli-win32-x64@npm:2.3.13"
+  conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@bybas/weather-icons@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@bybas/weather-icons@npm:2.0.0"
+  checksum: 10c0/01ba426a72697c91789a709b387adef074fbacff8213807db77997fd6e996bec8ff34306d1ec92a93e505148269f8ae4e4ad5c71f4475c2b10e9c078ca089522
+  languageName: node
+  linkType: hard
+
 "@cacheable/memory@npm:^2.0.5":
   version: 2.0.5
   resolution: "@cacheable/memory@npm:2.0.5"
@@ -1270,6 +1368,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@fontsource/geist@npm:^5.2.8":
+  version: 5.2.8
+  resolution: "@fontsource/geist@npm:5.2.8"
+  checksum: 10c0/0bd7d70633db12a03dcd0104769bf216401cba2c10a489454d731b4a4dac7411cbd83c4e424e9d0029c503134ab44a3404df96801c4f655d0b91cdd63de6c5c0
+  languageName: node
+  linkType: hard
+
+"@fontsource/inter@npm:^5.2.8":
+  version: 5.2.8
+  resolution: "@fontsource/inter@npm:5.2.8"
+  checksum: 10c0/f737dd50005e4809887ba55ae0c9b7174216d6d14875d17a4fbb9a0ad75dec4265928b805a43fe16a23f14a878f1974a398bbfc84ad65c79fc4d4b9c3ea154e1
+  languageName: node
+  linkType: hard
+
+"@fontsource/manrope@npm:^5.2.8":
+  version: 5.2.8
+  resolution: "@fontsource/manrope@npm:5.2.8"
+  checksum: 10c0/25144b4c5e185ba20a656f28cf225b3fcf5139a3f741716fcbfcda55f27f241ba1457d0aa395613990fb18ecffd0ad781f21dad4def50a80c0d90fd9252d8664
+  languageName: node
+  linkType: hard
+
 "@humanfs/core@npm:^0.19.1":
   version: 0.19.1
   resolution: "@humanfs/core@npm:0.19.1"
@@ -1560,6 +1679,15 @@ __metadata:
   dependencies:
     semver: "npm:^7.3.5"
   checksum: 10c0/162b4a0b8705cd6f5c2470b851d1dc6cd228c86d2170e1769d738c1fbb69a87160901411c3c035331e9e99db72f1f1099a8b734bf1637cc32b9a5be1660e4e1e
+  languageName: node
+  linkType: hard
+
+"@openmeteo/sdk@npm:^1.23.0":
+  version: 1.25.0
+  resolution: "@openmeteo/sdk@npm:1.25.0"
+  dependencies:
+    flatbuffers: "npm:^25.9.23"
+  checksum: 10c0/ad93d67c5da25358c4de2b89486b70c7551100e368b45370645e8191e69c8cc5b8177c5a4e2532266c60d878112d8ccc9823ff25139d94369e7589dca6eb002b
   languageName: node
   linkType: hard
 
@@ -4412,6 +4540,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"flatbuffers@npm:^25.9.23":
+  version: 25.9.23
+  resolution: "flatbuffers@npm:25.9.23"
+  checksum: 10c0/957c4ae2a02be1703c98b36b4dc8ceb81613cf8e2333026afc95a7b68b088bed5458056dc29d0ab7ce8bc403b8c003732b0968d24aba46f5e7c8f71789a6bd9e
+  languageName: node
+  linkType: hard
+
 "flatted@npm:^3.2.9":
   version: 3.2.9
   resolution: "flatted@npm:3.2.9"
@@ -5960,7 +6095,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "mantine-vite-template@workspace:."
   dependencies:
+    "@biomejs/biome": "npm:^2.3.13"
+    "@bybas/weather-icons": "npm:^2.0.0"
     "@eslint/js": "npm:^9.37.0"
+    "@fontsource/geist": "npm:^5.2.8"
+    "@fontsource/inter": "npm:^5.2.8"
+    "@fontsource/manrope": "npm:^5.2.8"
     "@ianvs/prettier-plugin-sort-imports": "npm:^4.7.0"
     "@mantine/core": "npm:8.3.13"
     "@mantine/hooks": "npm:8.3.13"
@@ -5981,10 +6121,10 @@ __metadata:
     eslint-plugin-react: "npm:^7.37.5"
     identity-obj-proxy: "npm:^3.0.0"
     jsdom: "npm:^27.0.0"
+    openmeteo: "npm:^1.2.3"
     postcss: "npm:^8.5.6"
     postcss-preset-mantine: "npm:1.18.0"
     postcss-simple-vars: "npm:^7.0.1"
-    prettier: "npm:^3.6.2"
     prop-types: "npm:^15.8.1"
     react: "npm:^19.2.0"
     react-dom: "npm:^19.2.0"
@@ -6416,6 +6556,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"openmeteo@npm:^1.2.3":
+  version: 1.2.3
+  resolution: "openmeteo@npm:1.2.3"
+  dependencies:
+    "@openmeteo/sdk": "npm:^1.23.0"
+    flatbuffers: "npm:^25.9.23"
+  checksum: 10c0/5a80688c872f2b38f2c928625ef8c6c28ee40d738c8d99e122531792fc15b2bd0ea57d8296f1461f4289af3cead9f3529242c0fe784d37b6e0c188f5663b7b17
+  languageName: node
+  linkType: hard
+
 "optionator@npm:^0.9.3":
   version: 0.9.3
   resolution: "optionator@npm:0.9.3"
@@ -6740,15 +6890,6 @@ __metadata:
   version: 1.2.1
   resolution: "prelude-ls@npm:1.2.1"
   checksum: 10c0/b00d617431e7886c520a6f498a2e14c75ec58f6d93ba48c3b639cf241b54232d90daa05d83a9e9b9fef6baa63cb7e1e4602c2372fea5bc169668401eb127d0cd
-  languageName: node
-  linkType: hard
-
-"prettier@npm:^3.6.2":
-  version: 3.8.1
-  resolution: "prettier@npm:3.8.1"
-  bin:
-    prettier: bin/prettier.cjs
-  checksum: 10c0/33169b594009e48f570471271be7eac7cdcf88a209eed39ac3b8d6d78984039bfa9132f82b7e6ba3b06711f3bfe0222a62a1bfb87c43f50c25a83df1b78a2c42
   languageName: node
   linkType: hard
 
