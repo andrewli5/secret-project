@@ -1,5 +1,5 @@
-import { MBTAIcon } from '@/assets/mbta/MBTAIcon';
-import { Box, Card, Group, Paper, Text } from '@mantine/core';
+import MBTAIcon from '@/assets/mbta/mbtaIcon';
+import { Card, Group, Text } from '@mantine/core';
 
 export function WidgetCard({
   children,
