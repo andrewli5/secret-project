@@ -34,12 +34,14 @@ jobs:
 
       - name: Build
         run: yarn build
+        env:
+          VITE_MBTA_API_KEY: ${{ secrets.VITE_MBTA_API_KEY }}
 
       - uses: actions/configure-pages@v5
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: './dist'   # ⭐ ONLY THIS
+          path: './dist'
 
       - id: deployment
         uses: actions/deploy-pages@v4
