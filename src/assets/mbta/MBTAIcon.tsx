@@ -1,5 +1,5 @@
 import mbtaIcon from './MBTA.svg';
 
-const MBTAIcon = () => <img src={mbtaIcon} width={24} height={24} alt="MBTA Icon" />;
+const MBTAIcon = () => <img src={mbtaIcon} width={32} height={32} alt="MBTA Icon" />;
 
 export default MBTAIcon;

@@ -16,13 +16,13 @@ function minutesFromNow(isoTime: string) {
 
 const mbta = createMbtaClient();
 
-export async function getNextTwoArrivalsInMinutes(args: { stopId: string; directionId: number }) {
+export async function getNextThreeArrivalsInMinutes(args: { stopId: string; directionId: number }) {
   const { stopId, directionId } = args;
 
   const json = await mbta.getJson<PredictionsResponse>('/predictions', {
     'filter[stop]': stopId,
     'filter[direction_id]': directionId,
-    'page[limit]': 3,
+    'page[limit]': 4,
     sort: 'arrival_time',
   });
 
@@ -31,7 +31,7 @@ export async function getNextTwoArrivalsInMinutes(args: { stopId: string; direct
     .filter((t): t is string => Boolean(t))
     .map((t) => minutesFromNow(t))
     .filter((mins) => mins > 0)
-    .slice(0, 2);
+    .slice(0, 3);
 
   return times;
 }

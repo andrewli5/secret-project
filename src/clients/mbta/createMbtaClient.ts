@@ -12,7 +12,9 @@ export function createMbtaClient() {
 
     if (params) {
       for (const [k, v] of Object.entries(params)) {
-        if (v === undefined || v === null) continue;
+        if (v === undefined || v === null) {
+          continue;
+        }
         url.searchParams.set(k, String(v));
       }
     }

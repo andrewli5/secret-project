@@ -1,5 +1,4 @@
-import { createTheme } from '@mantine/core';
-import type { TextProps, MantineThemeOverride } from '@mantine/core';
+import { type TextProps, type MantineThemeOverride, createTheme } from '@mantine/core';
 
 export const theme: MantineThemeOverride = createTheme({
   fontFamily: 'Manrope, Geist, system-ui, -apple-system, sans-serif',

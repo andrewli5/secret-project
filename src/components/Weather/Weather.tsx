@@ -1,51 +1,67 @@
 import { WeatherIcon } from '@/assets/weather/weatherIcons';
 import { getWeatherText } from '@/assets/weather/weatherText';
-import { getWeatherData, WeatherData } from '@/clients/openmeteo/weather';
-import { Card, Group, Paper, Stack, Text } from '@mantine/core';
-import { useCallback, useEffect, useState } from 'react';
+import type { WeatherData } from '@/clients/openmeteo/weather';
+import { Card, Group, Stack, Text } from '@mantine/core';
 import { WidgetCard } from '../WidgetCard';
 import { Figure } from '../Figure';
+import { LastUpdatedTime } from '../LastUpdatedTime';
 
-const REFRESH_MS = 5 * 60 * 1000; // 5 minutes
+type Props = {
+  weatherData?: WeatherData;
+};
 
-export function Weather() {
-  const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
+export function Weather({ weatherData }: Props) {
   const wmoCode = weatherData?.current.weather_code ?? 0;
-
-  const fetchWeather = useCallback(async () => {
-    const data = await getWeatherData();
-    setWeatherData(data);
-  }, []);
-
-  useEffect(() => {
-    fetchWeather();
-    const intervalId = setInterval(fetchWeather, REFRESH_MS);
-    return () => clearInterval(intervalId);
-  }, []);
+  const isDay = weatherData?.current.is_day ?? false;
 
   return (
     <WidgetCard>
       <Card.Section p="sm">
-        <Group gap={6}>
-          <WeatherIcon code={wmoCode} isDay={weatherData?.current.is_day || false} />
-          <Text>{getWeatherText(wmoCode)}</Text>
+        <Group gap={6} align="center">
+          <WeatherIcon size={140} code={wmoCode} isDay={isDay} />
+          <Text size="3.2rem">{getWeatherText(wmoCode)}</Text>
         </Group>
       </Card.Section>
       <Card.Section px="sm">
-        <Group justify="space-evenly">
+        <Group px="md" gap={100} mt="-lg">
           <Stack align="center" gap={0}>
-            <Text size="xs" mb="-md">
-              actual
-            </Text>
-            <Figure number={Math.round(weatherData?.current.temperature_2m ?? 0)} unit="°f" />
+            <Figure
+              number={Math.round(weatherData?.current.temperature_2m ?? 0)}
+              unit="°f"
+              unitSize="lg"
+              size="18rem"
+            />
           </Stack>
-          <Stack align="center" gap={0}>
-            <Text size="xs" mb="-md">
-              feels like
-            </Text>
-            <Figure number={Math.round(weatherData?.current.apparent_temperature ?? 0)} unit="°f" />
+          <Stack gap={0}>
+            <Group align="center" justify="space-between" gap={50}>
+              <Text size="md">feels like</Text>
+              <Figure
+                number={Math.round(weatherData?.current.apparent_temperature ?? 0)}
+                unit="°f"
+                size="3rem"
+              />
+            </Group>
+            <Group align="center" justify="space-between">
+              <Text size="md">high</Text>
+              <Figure
+                number={Math.round(weatherData?.daily.temperature_2m_max[0] ?? 0)}
+                unit="°f"
+                size="3rem"
+              />
+            </Group>
+            <Group align="center" justify="space-between">
+              <Text size="md">low</Text>
+              <Figure
+                number={Math.round(weatherData?.daily.temperature_2m_min[0] ?? 0)}
+                unit="°f"
+                size="3rem"
+              />
+            </Group>
           </Stack>
         </Group>
+      </Card.Section>
+      <Card.Section px="sm">
+        <LastUpdatedTime time={weatherData?.current.time} />
       </Card.Section>
     </WidgetCard>
   );

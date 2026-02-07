@@ -1,24 +1,22 @@
-import MBTAIcon from '@/assets/mbta/mbtaIcon';
 import { Card, Group, Text } from '@mantine/core';
+import MBTAIcon from '@/assets/mbta/MBTAIcon';
 
-export function WidgetCard({
-  children,
-  title,
-  bg,
-  c,
-}: {
+type Props = {
   children: React.ReactNode;
   title?: string;
+  titleBg?: string;
   bg?: string;
   c?: string;
-}) {
+};
+
+export function WidgetCard({ children, title, titleBg, bg, c }: Props) {
   return (
-    <Card shadow="md" p="md" radius="md">
+    <Card shadow="lg" p="md" radius="lg" withBorder bg={bg ?? 'transparent'}>
       {title && (
         <Card.Section>
-          <Group bg={bg ?? 'blue'} p="md" gap="sm">
+          <Group bg={titleBg ?? 'blue'} p="lg" gap="sm">
             <MBTAIcon />
-            <Text size="md" fw={500} c={c ?? 'white'} ta="center">
+            <Text size="2.5rem" fw={500} c={c ?? 'white'} ta="center">
               {title}
             </Text>
           </Group>
