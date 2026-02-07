@@ -33,10 +33,15 @@ export const getCurrentPosition = (): Promise<Coordinates> => {
   });
 };
 
+// default to Boston, MA if geolocation is not available
+const DEFAULT_COORDS: Coordinates = {
+  latitude: 42.3555,
+  longitude: -71.0565,
+};
+
 const buildParams = (coords: Coordinates) => ({
-  // default to Boston, MA if geolocation is not available
-  latitude: coords.latitude || 42.3555,
-  longitude: coords.longitude || -71.0565, 
+  latitude: coords.latitude,
+  longitude: coords.longitude,
   daily: ['temperature_2m_min', 'temperature_2m_max'],
   current: ['temperature_2m', 'apparent_temperature', 'is_day', 'weather_code'],
   timezone: 'auto',
@@ -60,7 +65,12 @@ export type WeatherData = {
 };
 
 export const getWeatherData = async (): Promise<WeatherData> => {
-  const coords = await getCurrentPosition();
+  let coords: Coordinates;
+  try {
+    coords = await getCurrentPosition();
+  } catch {
+    coords = DEFAULT_COORDS;
+  }
   const params = buildParams(coords);
   const responses = await fetchWeatherApi(url, params);
   const response = responses[0];
