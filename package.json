@@ -11,9 +11,7 @@
     "lint": "npm run eslint && npm run stylelint",
     "eslint": "eslint . --cache",
     "stylelint": "stylelint '**/*.css' --cache",
-    "format": "biome format . --write",
-    "predeploy": "yarn build",
-    "deploy": "gh-pages -d dist"
+    "format": "biome format . --write"
   },
   "dependencies": {
     "@biomejs/biome": "^2.3.13",
