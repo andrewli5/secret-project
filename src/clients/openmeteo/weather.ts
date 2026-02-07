@@ -34,8 +34,9 @@ export const getCurrentPosition = (): Promise<Coordinates> => {
 };
 
 const buildParams = (coords: Coordinates) => ({
-  latitude: coords.latitude,
-  longitude: coords.longitude,
+  // default to Boston, MA if geolocation is not available
+  latitude: coords.latitude || 42.3555,
+  longitude: coords.longitude || -71.0565, 
   daily: ['temperature_2m_min', 'temperature_2m_max'],
   current: ['temperature_2m', 'apparent_temperature', 'is_day', 'weather_code'],
   timezone: 'auto',
