@@ -16,7 +16,7 @@ export function WidgetCard({ children, title, titleBg, bg, c }: Props) {
         <Card.Section>
           <Group bg={titleBg ?? 'blue'} p="lg" gap="sm">
             <MBTAIcon />
-            <Text size="2.5rem" fw={500} c={c ?? 'white'} ta="center">
+            <Text size="2rem" fw={500} c={c ?? 'white'} ta="center">
               {title}
             </Text>
           </Group>

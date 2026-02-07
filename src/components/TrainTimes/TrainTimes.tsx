@@ -83,7 +83,7 @@ export function TrainTimes({ stopId, directionIds, routeId }: Props) {
       <Group w="100%" grow>
         {paddedMins.map((min, index) => (
           <Box key={`min-${index}`} ta="center">
-            <Figure number={min} unit="min" index={index} size="8rem" my="xl" />
+            <Figure number={min} unit="min" index={index} size="5rem" my="xl" />
           </Box>
         ))}
       </Group>
@@ -92,28 +92,29 @@ export function TrainTimes({ stopId, directionIds, routeId }: Props) {
 
   const renderDirectionLabel = (directionId: number) => (
     <Group gap={12} mt="sm">
-      <Badge ff="system-ui" size="2.1rem" color={`#${route?.color}`} c={`#${route?.text_color}`}>
+      <Badge ff="system-ui" size="2rem" color={`#${route?.color}`} c={`#${route?.text_color}`}>
         {route?.short_name}
       </Badge>
-      <Text size="2.5rem">{route?.direction_destinations[directionId]}</Text>
+      <Text size="2rem">{route?.direction_destinations[directionId]}</Text>
     </Group>
   );
 
   return (
     <WidgetCard title={stop?.name} titleBg={`#${route?.color}`} c={`#${route?.text_color}`}>
-      <Card.Section p="xs">
+      <Card.Section px="xs" pt="xs">
         <Stack gap={2}>
           {directionIds.map((directionId, index) => (
             <Stack key={index} gap={1}>
               {renderDirectionLabel(directionId)}
               {renderMinutesDisplay(directionId)}
-              <LastUpdatedTime time={lastUpdated} seconds />
-              {index < directionIds.length - 1 && <Divider mb="sm" />}
+              {index < directionIds.length - 1 && <Divider mb="xs" />}
             </Stack>
           ))}
         </Stack>
       </Card.Section>
-      <Card.Section px="sm" />
+      <Card.Section p="xs" pt={1}>
+        <LastUpdatedTime time={lastUpdated} seconds />
+      </Card.Section>
     </WidgetCard>
   );
 }

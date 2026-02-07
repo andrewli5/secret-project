@@ -24,20 +24,20 @@ export const Clock = () => {
   return (
     <WidgetCard>
       <Card.Section p="sm">
-        <Stack align="center" gap={0}>
-          <Text size="lg">
+        <Stack align="center" gap={10}>
+          <Text size="2.5rem">
             {time.toLocaleDateString(undefined, {
               weekday: 'long',
               month: 'long',
               day: 'numeric',
             })}
           </Text>
-          <Group gap={20} align="baseline">
-            <Text size="10rem" fw={300}>
+          <Group gap={0} align="baseline">
+            <Text size="9rem" fw={300}>
               {displayHours}:{formatTwoDigits(minutes)}
             </Text>
 
-            <Text size="md" c="">
+            <Text size="3rem" c="">
               {isPM ? 'PM' : 'AM'}
             </Text>
           </Group>

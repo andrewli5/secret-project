@@ -2,13 +2,6 @@ import { type TextProps, type MantineThemeOverride, createTheme } from '@mantine
 
 export const theme: MantineThemeOverride = createTheme({
   fontFamily: 'Manrope, Geist, system-ui, -apple-system, sans-serif',
-  fontSizes: {
-    xs: '18px',
-    sm: '25px',
-    md: '28px',
-    lg: '70px',
-    xl: '102px',
-  },
   // headings: {
   //   fontFamily: 'Manrope, Geist, Inter, sans-serif',
   // },

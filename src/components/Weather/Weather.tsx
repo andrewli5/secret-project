@@ -16,10 +16,10 @@ export function Weather({ weatherData }: Props) {
 
   return (
     <WidgetCard>
-      <Card.Section p="sm">
+      <Card.Section p="xs" pt={0} mt="-xl">
         <Group gap={6} align="center">
-          <WeatherIcon size={140} code={wmoCode} isDay={isDay} />
-          <Text size="3.2rem">{getWeatherText(wmoCode)}</Text>
+          <WeatherIcon size={128} code={wmoCode} isDay={isDay} />
+          <Text size="2.5rem">{getWeatherText(wmoCode)}</Text>
         </Group>
       </Card.Section>
       <Card.Section px="sm">
@@ -28,17 +28,18 @@ export function Weather({ weatherData }: Props) {
             <Figure
               number={Math.round(weatherData?.current.temperature_2m ?? 0)}
               unit="°f"
-              unitSize="lg"
-              size="18rem"
+              unitSize="3rem"
+              size="10rem"
             />
           </Stack>
-          <Stack gap={0}>
+          <Stack gap={3}>
             <Group align="center" justify="space-between" gap={50}>
-              <Text size="md">feels like</Text>
+              <Text size="1rem">feels like</Text>
               <Figure
                 number={Math.round(weatherData?.current.apparent_temperature ?? 0)}
                 unit="°f"
-                size="3rem"
+                unitSize="1.2rem"
+                size="2rem"
               />
             </Group>
             <Group align="center" justify="space-between">
@@ -46,7 +47,8 @@ export function Weather({ weatherData }: Props) {
               <Figure
                 number={Math.round(weatherData?.daily.temperature_2m_max[0] ?? 0)}
                 unit="°f"
-                size="3rem"
+                unitSize="1.2rem"
+                size="2rem"
               />
             </Group>
             <Group align="center" justify="space-between">
@@ -54,13 +56,14 @@ export function Weather({ weatherData }: Props) {
               <Figure
                 number={Math.round(weatherData?.daily.temperature_2m_min[0] ?? 0)}
                 unit="°f"
-                size="3rem"
+                unitSize="1.2rem"
+                size="2rem"
               />
             </Group>
           </Stack>
         </Group>
       </Card.Section>
-      <Card.Section px="sm">
+      <Card.Section p="xs" pt={0}>
         <LastUpdatedTime time={weatherData?.current.time} />
       </Card.Section>
     </WidgetCard>
