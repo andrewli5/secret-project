@@ -31,7 +31,7 @@ export const LastUpdatedTime = ({ time, seconds = false }: { time?: Date; second
 
   return (
     <Group gap={10} justify="flex-end" align="center">
-      <BsArrowClockwise size={23} color="gray" />
+      <BsArrowClockwise size={18} color="gray" />
       <Text ta="right" size="sm" c="dimmed">
         {timeAgo}
       </Text>
