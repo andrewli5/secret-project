@@ -69,14 +69,10 @@ export function TrainTimes({ stopId, directionIds, routeId }: Props) {
       return 'Loading...';
     }
 
-    if (mins[directionId].length === 0) {
-      return 'No upcoming transit';
-    }
-
     const paddedMins: (number | undefined)[] = [
-      mins[directionId][0] ?? undefined,
-      mins[directionId][1] ?? undefined,
-      mins[directionId][2] ?? undefined,
+      mins[directionId]?.[0] ?? undefined,
+      mins[directionId]?.[1] ?? undefined,
+      mins[directionId]?.[2] ?? undefined,
     ];
 
     return (
