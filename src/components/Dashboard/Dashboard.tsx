@@ -1,6 +1,7 @@
 import { Paper, SimpleGrid, Stack } from '@mantine/core';
 import { TrainTimes } from '../TrainTimes/TrainTimes';
 import { Weather } from '../Weather/Weather';
+import { ChineseOfTheDay } from '../ChineseOfTheDay/ChineseOfTheDay';
 import { Clock } from '../Clock/Clock';
 import { getWeatherData, type WeatherData } from '@/clients/openmeteo/weather';
 import { useCallback, useEffect, useState } from 'react';
@@ -36,6 +37,7 @@ export const Dashboard = () => {
         </Stack>
         <Stack>
           <Weather weatherData={weatherData} />
+          <ChineseOfTheDay />
         </Stack>
       </SimpleGrid>
     </Paper>
