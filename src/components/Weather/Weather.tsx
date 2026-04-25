@@ -49,14 +49,14 @@ export function Weather({ weatherData }: Props) {
       <Box
         style={{
           position: 'absolute',
-          top: -160,
-          left: -110,
-          opacity: 0.08,
+          top: -150,
+          left: -140,
+          opacity: 0.05,
           pointerEvents: 'none',
           zIndex: 0,
         }}
       >
-        <WeatherIcon size={450} code={wmoCode} isDay={isDay} animated={false} />
+        <WeatherIcon size={700} code={wmoCode} isDay={isDay} animated={false} />
       </Box>
       <Stack gap="md" style={{ position: 'relative', zIndex: 1 }}>
         <Text size="3rem" ml="xs">
