@@ -20,9 +20,10 @@ export const getTimeAgo = (time?: Date, useSeconds?: boolean): string => {
 const REFRESH_MS = 2500;
 
 export const LastUpdatedTime = ({ time, seconds = false }: { time?: Date; seconds?: boolean }) => {
-  const [timeAgo, setTimeAgo] = useState<string>(getTimeAgo(time, seconds));
+  const [timeAgo, setTimeAgo] = useState<string>(() => getTimeAgo(time, seconds));
 
   useEffect(() => {
+    setTimeAgo(getTimeAgo(time, seconds));
     const intervalId = setInterval(() => {
       setTimeAgo(getTimeAgo(time, seconds));
     }, REFRESH_MS);

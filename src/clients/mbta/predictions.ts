@@ -1,4 +1,4 @@
-import { createMbtaClient } from './createMbtaClient';
+import { mbtaClient } from './createMbtaClient';
 
 export type MbtaPrediction = {
   attributes: {
@@ -14,24 +14,42 @@ function minutesFromNow(isoTime: string) {
   return Math.max(0, Math.round(ms / 60000));
 }
 
-const mbta = createMbtaClient();
+export async function getNextThreeArrivalsInMinutes(args: {
+  stopId: string;
+  directionId: number;
+  routeId?: string;
+}) {
+  const { stopId, directionId, routeId } = args;
 
-export async function getNextThreeArrivalsInMinutes(args: { stopId: string; directionId: number }) {
-  const { stopId, directionId } = args;
-
-  const json = await mbta.getJson<PredictionsResponse>('/predictions', {
+  const params: Record<string, string | number> = {
     'filter[stop]': stopId,
     'filter[direction_id]': directionId,
-    'page[limit]': 4,
+    'page[limit]': 10,
     sort: 'arrival_time',
-  });
+  };
+  if (routeId) {
+    params['filter[route]'] = routeId;
+  }
 
-  const times = json.data
-    .map((p) => p.attributes.arrival_time)
-    .filter((t): t is string => Boolean(t))
-    .map((t) => minutesFromNow(t))
-    .filter((mins) => mins > 0)
-    .slice(0, 3);
+  const json = await mbtaClient.getJson<PredictionsResponse>('/predictions', params);
+
+  const seenArrivalTimes = new Set<string>();
+  const times: number[] = [];
+
+  for (const p of json.data) {
+    const arrival = p.attributes.arrival_time;
+    if (!arrival || seenArrivalTimes.has(arrival)) {
+      continue;
+    }
+    seenArrivalTimes.add(arrival);
+    const mins = minutesFromNow(arrival);
+    if (mins > 0) {
+      times.push(mins);
+    }
+    if (times.length >= 3) {
+      break;
+    }
+  }
 
   return times;
 }

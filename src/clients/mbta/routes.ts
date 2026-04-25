@@ -1,4 +1,4 @@
-import { createMbtaClient } from './createMbtaClient';
+import { mbtaClient } from './createMbtaClient';
 
 export type MbtaRoute = {
   attributes: {
@@ -13,10 +13,8 @@ export type MbtaRoute = {
 
 type RoutesResponse = { data: MbtaRoute };
 
-const mbta = createMbtaClient();
-
 export async function getRouteData(args: { routeId: string }) {
   const { routeId } = args;
-  const json = await mbta.getJson<RoutesResponse>(`/routes/${routeId}`);
+  const json = await mbtaClient.getJson<RoutesResponse>(`/routes/${routeId}`);
   return json.data.attributes;
 }

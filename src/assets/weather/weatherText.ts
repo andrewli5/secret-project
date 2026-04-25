@@ -7,7 +7,7 @@ export const WMO_CODE_TO_TEXT: Record<number, string> = {
 
   // Fog
   45: 'Fog',
-  48: 'Freezing fog',
+  48: 'Rime fog',
 
   // Drizzle
   51: 'Light drizzle',

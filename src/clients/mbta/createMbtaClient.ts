@@ -1,6 +1,6 @@
 const MBTA_BASE_URL = 'https://api-v3.mbta.com';
 
-export function createMbtaClient() {
+function createMbtaClient() {
   const baseUrl = MBTA_BASE_URL;
   const apiKey = import.meta.env.VITE_MBTA_API_KEY;
 
@@ -32,3 +32,5 @@ export function createMbtaClient() {
 
   return { getJson };
 }
+
+export const mbtaClient = createMbtaClient();

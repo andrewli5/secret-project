@@ -1,4 +1,4 @@
-import { Card, Group, Stack, Text } from '@mantine/core';
+import { Card, Divider, Group, Stack, Text } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { WidgetCard } from '../WidgetCard';
 
@@ -32,12 +32,20 @@ export const Clock = () => {
               day: 'numeric',
             })}
           </Text>
+          <Divider w="100%" />
           <Group gap={0} align="baseline">
-            <Text size="9rem" fw={300}>
+            <Text
+              size="9rem"
+              fw={300}
+              style={{
+                fontFamily: 'Geist, sans-serif',
+                fontVariantNumeric: 'tabular-nums',
+                whiteSpace: 'nowrap',
+              }}
+            >
               {displayHours}:{formatTwoDigits(minutes)}
             </Text>
-
-            <Text size="3rem" c="">
+            <Text span size="3rem" c="dimmed">
               {isPM ? 'PM' : 'AM'}
             </Text>
           </Group>

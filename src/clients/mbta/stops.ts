@@ -1,4 +1,4 @@
-import { createMbtaClient } from './createMbtaClient';
+import { mbtaClient } from './createMbtaClient';
 
 export type MbtaStop = {
   attributes: {
@@ -8,11 +8,9 @@ export type MbtaStop = {
 
 type StopsResponse = { data: MbtaStop };
 
-const mbta = createMbtaClient();
-
 export async function getStopData(args: { stopId: string }) {
   const { stopId } = args;
 
-  const json = await mbta.getJson<StopsResponse>(`/stops/${stopId}`);
+  const json = await mbtaClient.getJson<StopsResponse>(`/stops/${stopId}`);
   return json.data.attributes;
 }
