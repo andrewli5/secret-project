@@ -3,7 +3,7 @@ import { getWeatherText } from '@/assets/weather/weatherText';
 import { adjustWeatherCode, getWeatherData, type WeatherData } from '@/clients/openmeteo/weather';
 import { usePolledData } from '@/hooks/usePolledData';
 import { GEIST_FONT } from '@/theme';
-import { Badge, Box, Card, Divider, Group, Skeleton, Stack, Text } from '@mantine/core';
+import { Badge, Box, Card, Group, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { WidgetCard } from '../WidgetCard';
 import { Figure } from '../Figure';
 
@@ -98,31 +98,39 @@ export function Weather() {
 
   return (
     <WidgetCard style={{ position: 'relative', overflow: 'hidden' }}>
-      <Stack gap="sm" pos="relative" style={{ zIndex: 1 }}>
-        <Group gap={30} wrap="nowrap">
-          <Figure
-            number={Math.round(weatherData.current.temperature_2m ?? 0)}
-            unit="°f"
-            unitSize="2rem"
-            size="10rem"
-            fw={300}
-          />
-          <Stack gap={3}>
-            <Group gap={3} mb="xs">
-              <Text size="1.5rem">{getWeatherText(wmoCode)}</Text>
-              <WeatherIcon size={25} code={wmoCode} isDay={isDay} animated={true} />
-            </Group>
-            {detailRows(weatherData).map(({ label, color, value }) => (
-              <Group key={label} justify="space-between" gap={8} wrap="nowrap">
-                <Badge variant="light" color={color} size="lg" ff="system-ui">
-                  {label}
-                </Badge>
-                <Figure number={Math.round(value ?? 0)} unit="°f" unitSize="1.2rem" size="2rem" />
-              </Group>
-            ))}
-          </Stack>
+      <Stack gap={0} pos="relative" style={{ zIndex: 1 }}>
+        <Group gap={10}>
+          <WeatherIcon size={70} code={wmoCode} isDay={isDay} animated={true} />
+          <Text size="3rem">{getWeatherText(wmoCode)}</Text>
         </Group>
-
+        <Group gap={50} wrap="nowrap">
+          <Box>
+            <Figure
+              figure={Math.round(weatherData.current.temperature_2m ?? 0).toString()}
+              unit="°f"
+              unitSize="3.5rem"
+              size="12rem"
+              fw={300}
+            />
+          </Box>
+          <Paper radius="lg" p="md" bg="var(--mantine-color-default-hover)">
+            <Stack gap={3}>
+              {detailRows(weatherData).map(({ label, color, value }) => (
+                <Group key={label} gap={20} wrap="nowrap">
+                  <Badge flex={1} variant="light" color={color} size="lg" ff="system-ui">
+                    {label}
+                  </Badge>
+                  <Figure
+                    figure={Math.round(value ?? 0).toString()}
+                    unit="°f"
+                    unitSize="1.2rem"
+                    size="2rem"
+                  />
+                </Group>
+              ))}
+            </Stack>
+          </Paper>
+        </Group>
         {/* <Divider />
         <WeatherForecast daily={weatherData.daily} /> */}
       </Stack>

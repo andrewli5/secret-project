@@ -45,7 +45,7 @@ export function TrainTimes({ stopId, directionIds, routeId }: Props) {
       <Group w="100%" grow>
         {slots.map(({ key, value }) => (
           <Box key={key} ta="center">
-            <Figure number={value} unit="min" size="5rem" my="xl" />
+            <Figure figure={value?.toString()} unit="min" size="5rem" my="xl" />
           </Box>
         ))}
       </Group>

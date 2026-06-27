@@ -2,7 +2,7 @@ import { GEIST_FONT } from '@/theme';
 import { Text } from '@mantine/core';
 
 type Props = {
-  number?: number;
+  figure?: string;
   unit?: string;
   size?: string;
   unitSize?: string;
@@ -10,23 +10,23 @@ type Props = {
   fw?: number;
 };
 
-export const Figure = ({ number, unit, size, unitSize, my, fw }: Props) => {
-  const digits = number !== undefined ? String(number).length : 0;
-  const resolvedSize = size && digits >= 3 ? `calc(${size} * ${2 / digits})` : (size ?? 'xl');
+export const Figure = ({ figure, unit, size, unitSize, my, fw }: Props) => {
+  const length = figure?.length ?? 0;
+  const resolvedSize = size && length >= 3 ? `calc(${size} * ${2 / length})` : (size ?? 'xl');
 
   return (
     <Text
       size={resolvedSize}
       fw={fw}
       my={my}
-      c={number === undefined ? 'dimmed' : undefined}
+      c={figure ? undefined : 'dimmed'}
       style={{
         fontFamily: GEIST_FONT,
         whiteSpace: 'nowrap',
         fontVariantNumeric: 'tabular-nums',
       }}
     >
-      {number !== undefined ? `${number}` : '--'}
+      {figure || '--'}
       {unit && (
         <Text span size={unitSize ?? 'md'} c="dimmed">
           {` ${unit}`}

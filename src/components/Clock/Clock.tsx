@@ -1,9 +1,46 @@
 import { GEIST_FONT } from '@/theme';
-import { Card, Divider, Group, Stack, Text } from '@mantine/core';
+import { Box, Card, Divider, Group, Stack, Text } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { WidgetCard } from '../WidgetCard';
 
 const REFRESH_MS = 1000;
+
+const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+/** Day-of-month numbers for the Sun-Sat week containing `date`, handling month/year rollover. */
+export const weekDatesFor = (date: Date): number[] =>
+  WEEKDAYS.map((_, i) => {
+    const d = new Date(date);
+    d.setDate(date.getDate() - date.getDay() + i);
+    return d.getDate();
+  });
+
+type DayCellProps = { label: string; date: number; isToday: boolean };
+
+const DayCell = ({ label, date, isToday }: DayCellProps) => (
+  <Stack align="center" gap={2} flex={1}>
+    <Text size="sm" c={isToday ? undefined : 'dimmed'}>
+      {label}
+    </Text>
+    <Box
+      w="2.25rem"
+      h="2.25rem"
+      bg={isToday ? 'var(--mantine-primary-color-filled)' : undefined}
+      style={{ borderRadius: '50%' }}
+    >
+      <Text
+        size="lg"
+        ta="center"
+        lh="2.25rem"
+        fw={isToday ? 700 : 400}
+        c={isToday ? 'var(--mantine-primary-color-contrast)' : undefined}
+        style={{ fontVariantNumeric: 'tabular-nums' }}
+      >
+        {date}
+      </Text>
+    </Box>
+  </Stack>
+);
 
 export const Clock = () => {
   const [time, setTime] = useState(new Date());
@@ -14,6 +51,9 @@ export const Clock = () => {
     }, REFRESH_MS);
     return () => clearInterval(intervalId);
   }, []);
+
+  const weekDates = weekDatesFor(time);
+  const today = time.getDay();
 
   const hours = time.getHours();
   const minutes = time.getMinutes();
@@ -49,6 +89,12 @@ export const Clock = () => {
             <Text span size="3rem" c="dimmed">
               {isPM ? 'PM' : 'AM'}
             </Text>
+          </Group>
+          <Divider w="100%" />
+          <Group gap={6} justify="center" w="100%">
+            {WEEKDAYS.map((day, i) => (
+              <DayCell key={day} label={day} date={weekDates[i]} isToday={i === today} />
+            ))}
           </Group>
         </Stack>
       </Card.Section>

@@ -26,7 +26,7 @@ export function ChineseOfTheDay() {
             lh={1}
             style={{
               fontFamily: CHINESE_FONT,
-              fontSize: `clamp(2.5rem, ${18 / Math.max(word.simplified.length, 1)}cqi, 4.5rem)`,
+              fontSize: `clamp(3.5rem, ${24 / Math.max(word.simplified.length, 1)}cqi, 6rem)`,
               whiteSpace: 'nowrap',
               flexShrink: 0,
             }}
@@ -38,7 +38,7 @@ export function ChineseOfTheDay() {
             <Text size="1.2rem" c="dimmed" tt="lowercase">
               chinese of the day
             </Text>
-            <Text size="2rem" fw={500} style={{ fontFamily: GEIST_FONT }}>
+            <Text size="2.75rem" fw={500} style={{ fontFamily: GEIST_FONT }}>
               {word.pinyin}
             </Text>
             <Text size="1.5rem" c="dimmed">
@@ -48,13 +48,13 @@ export function ChineseOfTheDay() {
         </Group>
         <Divider />
         <Stack gap={4}>
-          <Text fw={400} lh={1.4} style={{ fontFamily: CHINESE_FONT, fontSize: '1.6rem' }}>
+          <Text fw={400} lh={1.4} style={{ fontFamily: CHINESE_FONT, fontSize: '2rem' }}>
             {word.sentence.simplified}
           </Text>
-          <Text size="1.1rem" fw={500} style={{ fontFamily: GEIST_FONT }}>
+          <Text size="1.35rem" fw={500} style={{ fontFamily: GEIST_FONT }}>
             {word.sentence.pinyin}
           </Text>
-          <Text size="1rem" c="dimmed">
+          <Text size="1.2rem" c="dimmed">
             {word.sentence.english}
           </Text>
         </Stack>

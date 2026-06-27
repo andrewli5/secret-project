@@ -13,14 +13,14 @@ export const Dashboard = () => (
     <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
       <Stack>
         <Clock />
+        <ChineseOfTheDay />
+      </Stack>
+      <Stack>
         <TrainTimes
           stopId={BOSTON_LANDING_STOP_ID}
           directionIds={WORCESTER_INBOUND_DIRECTION_IDS}
           routeId={WORCESTER_LINE_ROUTE_ID}
         />
-      </Stack>
-      <Stack>
-        <ChineseOfTheDay />
         <Weather />
       </Stack>
     </SimpleGrid>

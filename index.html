@@ -6,8 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>my secret project</title>
     <style>
+      /*
+        Root font-size scales with viewport width so every rem-based size in
+        the app stays proportional across screens. Tuned for the Galaxy Tab
+        A9+ (1280 CSS px landscape): 1.25vw * 1280 = 16px = the old 100% base.
+        clamp() floors/caps it so phones and desktops stay sane.
+      */
       html {
-        font-size: 100%;
+        font-size: clamp(11px, 1.25vw, 20px);
       }
     </style>
   </head>
