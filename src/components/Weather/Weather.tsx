@@ -1,13 +1,13 @@
 import { WeatherIcon } from '@/assets/weather/weatherIcons';
 import { getWeatherText } from '@/assets/weather/weatherText';
-import { adjustWeatherCode, type WeatherData } from '@/clients/openmeteo/weather';
+import { adjustWeatherCode, getWeatherData, type WeatherData } from '@/clients/openmeteo/weather';
+import { usePolledData } from '@/hooks/usePolledData';
+import { GEIST_FONT } from '@/theme';
 import { Badge, Box, Card, Divider, Group, Skeleton, Stack, Text } from '@mantine/core';
 import { WidgetCard } from '../WidgetCard';
 import { Figure } from '../Figure';
 
-type Props = {
-  weatherData?: WeatherData;
-};
+const WEATHER_REFRESH_MS = 5 * 60 * 1000;
 
 const detailRows = (weatherData?: WeatherData) => [
   { label: 'feels', color: 'violet', value: weatherData?.current.apparent_temperature },
@@ -33,7 +33,19 @@ function WeatherSkeleton() {
   );
 }
 
-export function Weather({ weatherData }: Props) {
+export function Weather() {
+  const { data: weatherData, error } = usePolledData(getWeatherData, WEATHER_REFRESH_MS);
+
+  if (error && !weatherData) {
+    return (
+      <WidgetCard>
+        <Card.Section p="md">
+          <Text c="red">{error.message}</Text>
+        </Card.Section>
+      </WidgetCard>
+    );
+  }
+
   if (!weatherData) {
     return <WeatherSkeleton />;
   }
@@ -51,7 +63,7 @@ export function Weather({ weatherData }: Props) {
           position: 'absolute',
           top: -150,
           left: -140,
-          opacity: 0.05,
+          opacity: 0.03,
           pointerEvents: 'none',
           zIndex: 0,
         }}
@@ -96,21 +108,21 @@ export function Weather({ weatherData }: Props) {
 
             return (
               <Stack
-                key={dayLabel}
+                key={date.toISOString()}
                 gap={4}
                 align="center"
                 bg="var(--mantine-color-default-hover)"
                 p="xs"
-                style={{ borderRadius: 'var(--mantine-radius-md)' }}
+                bdrs="md"
               >
                 <Text size="xs" c="dimmed" ff="system-ui">
                   {dayLabel}
                 </Text>
                 <WeatherIcon size={28} code={dayCode} isDay animated={false} />
-                <Text size="xs" fw={600} style={{ fontFamily: 'Geist, sans-serif' }}>
+                <Text size="xs" fw={600} style={{ fontFamily: GEIST_FONT }}>
                   {high}°
                 </Text>
-                <Text size="xs" c="dimmed" style={{ fontFamily: 'Geist, sans-serif' }}>
+                <Text size="xs" c="dimmed" style={{ fontFamily: GEIST_FONT }}>
                   {low}°
                 </Text>
               </Stack>

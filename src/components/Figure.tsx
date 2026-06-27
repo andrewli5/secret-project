@@ -1,3 +1,4 @@
+import { GEIST_FONT } from '@/theme';
 import { Text } from '@mantine/core';
 
 type Props = {
@@ -20,7 +21,7 @@ export const Figure = ({ number, unit, size, unitSize, my, fw }: Props) => {
       my={my}
       c={number === undefined ? 'dimmed' : undefined}
       style={{
-        fontFamily: 'Geist, sans-serif',
+        fontFamily: GEIST_FONT,
         whiteSpace: 'nowrap',
         fontVariantNumeric: 'tabular-nums',
       }}

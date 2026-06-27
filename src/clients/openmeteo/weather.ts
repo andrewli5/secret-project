@@ -11,7 +11,7 @@ const geolocationOptions: PositionOptions = {
   timeout: 27000,
 };
 
-export const getCurrentPosition = (): Promise<Coordinates> => {
+const getCurrentPosition = (): Promise<Coordinates> => {
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
       reject(new Error('Geolocation is not supported by this browser'));
@@ -33,7 +33,6 @@ export const getCurrentPosition = (): Promise<Coordinates> => {
   });
 };
 
-// default to Boston, MA if geolocation is not available
 const DEFAULT_COORDS: Coordinates = {
   latitude: 42.3555,
   longitude: -71.0565,

@@ -1,8 +1,9 @@
+import { GEIST_FONT } from '@/theme';
 import { Card, Divider, Group, Stack, Text } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { WidgetCard } from '../WidgetCard';
 
-const REFRESH_MS = 1000; // 1 second
+const REFRESH_MS = 1000;
 
 export const Clock = () => {
   const [time, setTime] = useState(new Date());
@@ -38,7 +39,7 @@ export const Clock = () => {
               size="9rem"
               fw={300}
               style={{
-                fontFamily: 'Geist, sans-serif',
+                fontFamily: GEIST_FONT,
                 fontVariantNumeric: 'tabular-nums',
                 whiteSpace: 'nowrap',
               }}
