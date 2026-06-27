@@ -1,5 +1,12 @@
 import { Card, Group, Text } from '@mantine/core';
 
+const cardStyle: React.CSSProperties = {
+  // Dark-surface neumorphism: deep shadow bottom-right + faint gray
+  // highlight top-left (NOT white — white halos on a dark bg).
+  boxShadow: '4px 4px 12px rgba(0, 0, 0, 0.28), -3px -3px 9px rgba(255, 255, 255, 0.02)',
+  border: '1px solid rgba(255, 255, 255, 0.06)',
+};
+
 type Props = {
   children: React.ReactNode;
   title?: string;
@@ -13,7 +20,12 @@ type Props = {
 
 export function WidgetCard({ children, title, titleBg, bg, c, icon, rightIcon, style }: Props) {
   return (
-    <Card shadow="lg" p="md" radius="lg" withBorder bg={bg ?? 'transparent'} style={style}>
+    <Card
+      p="md"
+      radius="lg"
+      bg={bg ?? 'var(--mantine-color-default)'}
+      style={{ ...cardStyle, ...style }}
+    >
       {title && (
         <Card.Section>
           <Group bg={titleBg ?? 'blue'} p="lg" gap="sm" justify="space-between" wrap="nowrap">

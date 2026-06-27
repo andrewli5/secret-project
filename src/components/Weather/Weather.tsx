@@ -15,6 +15,46 @@ const detailRows = (weatherData?: WeatherData) => [
   { label: 'low', color: 'blue', value: weatherData?.daily.temperature_2m_min[0] },
 ];
 
+function WeatherForecast({ daily }: { daily: WeatherData['daily'] }) {
+  return (
+    <Group grow gap="xs" wrap="nowrap">
+      {daily.time.slice(1).map((date, i) => {
+        const idx = i + 1;
+        const dayCode = adjustWeatherCode(
+          daily.weather_code[idx] ?? 0,
+          daily.precipitation_probability_max[idx] ?? 0,
+          daily.sunshine_duration[idx],
+        );
+        const high = Math.round(daily.temperature_2m_max[idx] ?? 0);
+        const low = Math.round(daily.temperature_2m_min[idx] ?? 0);
+        const dayLabel = date.toLocaleDateString(undefined, { weekday: 'short' });
+
+        return (
+          <Stack
+            key={date.toISOString()}
+            gap={4}
+            align="center"
+            bg="var(--mantine-color-default-hover)"
+            p="xs"
+            bdrs="md"
+          >
+            <Text size="xs" c="dimmed" ff="system-ui">
+              {dayLabel}
+            </Text>
+            <WeatherIcon size={28} code={dayCode} isDay animated={false} />
+            <Text size="xs" fw={600} style={{ fontFamily: GEIST_FONT }}>
+              {high}°
+            </Text>
+            <Text size="xs" c="dimmed" style={{ fontFamily: GEIST_FONT }}>
+              {low}°
+            </Text>
+          </Stack>
+        );
+      })}
+    </Group>
+  );
+}
+
 function WeatherSkeleton() {
   return (
     <WidgetCard>
@@ -58,31 +98,20 @@ export function Weather() {
 
   return (
     <WidgetCard style={{ position: 'relative', overflow: 'hidden' }}>
-      <Box
-        style={{
-          position: 'absolute',
-          top: -150,
-          left: -140,
-          opacity: 0.03,
-          pointerEvents: 'none',
-          zIndex: 0,
-        }}
-      >
-        <WeatherIcon size={700} code={wmoCode} isDay={isDay} animated={false} />
-      </Box>
-      <Stack gap="md" style={{ position: 'relative', zIndex: 1 }}>
-        <Text size="3rem" ml="xs">
-          {getWeatherText(wmoCode)}
-        </Text>
-        <Group gap={40} wrap="nowrap">
+      <Stack gap="sm" pos="relative" style={{ zIndex: 1 }}>
+        <Group gap={30} wrap="nowrap">
           <Figure
             number={Math.round(weatherData.current.temperature_2m ?? 0)}
             unit="°f"
-            unitSize="2.5rem"
+            unitSize="2rem"
             size="10rem"
             fw={300}
           />
           <Stack gap={3}>
+            <Group gap={3} mb="xs">
+              <Text size="1.5rem">{getWeatherText(wmoCode)}</Text>
+              <WeatherIcon size={25} code={wmoCode} isDay={isDay} animated={true} />
+            </Group>
             {detailRows(weatherData).map(({ label, color, value }) => (
               <Group key={label} justify="space-between" gap={8} wrap="nowrap">
                 <Badge variant="light" color={color} size="lg" ff="system-ui">
@@ -93,42 +122,9 @@ export function Weather() {
             ))}
           </Stack>
         </Group>
-        <Divider />
-        <Group grow gap="xs" wrap="nowrap">
-          {weatherData.daily.time.slice(1).map((date, i) => {
-            const idx = i + 1;
-            const dayCode = adjustWeatherCode(
-              weatherData.daily.weather_code[idx] ?? 0,
-              weatherData.daily.precipitation_probability_max[idx] ?? 0,
-              weatherData.daily.sunshine_duration[idx],
-            );
-            const high = Math.round(weatherData.daily.temperature_2m_max[idx] ?? 0);
-            const low = Math.round(weatherData.daily.temperature_2m_min[idx] ?? 0);
-            const dayLabel = date.toLocaleDateString(undefined, { weekday: 'short' });
 
-            return (
-              <Stack
-                key={date.toISOString()}
-                gap={4}
-                align="center"
-                bg="var(--mantine-color-default-hover)"
-                p="xs"
-                bdrs="md"
-              >
-                <Text size="xs" c="dimmed" ff="system-ui">
-                  {dayLabel}
-                </Text>
-                <WeatherIcon size={28} code={dayCode} isDay animated={false} />
-                <Text size="xs" fw={600} style={{ fontFamily: GEIST_FONT }}>
-                  {high}°
-                </Text>
-                <Text size="xs" c="dimmed" style={{ fontFamily: GEIST_FONT }}>
-                  {low}°
-                </Text>
-              </Stack>
-            );
-          })}
-        </Group>
+        {/* <Divider />
+        <WeatherForecast daily={weatherData.daily} /> */}
       </Stack>
     </WidgetCard>
   );

@@ -20,8 +20,8 @@ export const Dashboard = () => (
         />
       </Stack>
       <Stack>
-        <Weather />
         <ChineseOfTheDay />
+        <Weather />
       </Stack>
     </SimpleGrid>
   </Paper>
