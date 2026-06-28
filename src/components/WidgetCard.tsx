@@ -1,9 +1,5 @@
 import { Card, Group, Text } from '@mantine/core';
-
-const cardStyle: React.CSSProperties = {
-  boxShadow: '4px 4px 12px rgba(0, 0, 0, 0.28), -3px -3px 9px rgba(255, 255, 255, 0.02)',
-  border: '1px solid rgba(255, 255, 255, 0.06)',
-};
+import { NEUMORPHIC_RAISED } from '@/theme';
 
 type Props = {
   children: React.ReactNode;
@@ -13,16 +9,27 @@ type Props = {
   c?: string;
   icon?: React.ReactNode;
   rightIcon?: React.ReactNode;
+  p?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   style?: React.CSSProperties;
 };
 
-export function WidgetCard({ children, title, titleBg, bg, c, icon, rightIcon, style }: Props) {
+export function WidgetCard({
+  children,
+  title,
+  titleBg,
+  bg,
+  c,
+  icon,
+  rightIcon,
+  p = 'md',
+  style,
+}: Props) {
   return (
     <Card
-      p="md"
+      p={p}
       radius="lg"
       bg={bg ?? 'var(--mantine-color-default)'}
-      style={{ ...cardStyle, ...style }}
+      style={{ ...NEUMORPHIC_RAISED, ...style }}
     >
       {title && (
         <Card.Section>

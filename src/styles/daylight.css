@@ -1,0 +1,36 @@
+@keyframes daylight-breathe {
+  0%,
+  100% {
+    opacity: 0.24;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.81;
+    transform: scale(1.048);
+  }
+}
+
+.daylight-breathe {
+  background: radial-gradient(
+    ellipse 90% 70% at 50% 15%,
+    rgba(255, 255, 255, 0.09) 0%,
+    transparent 68%
+  );
+  animation: daylight-breathe 11.5s ease-in-out infinite;
+}
+
+@keyframes star-twinkle {
+  0%,
+  100% {
+    opacity: 0.28;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+.daylight-star-twinkle {
+  animation: star-twinkle 3.3s ease-in-out infinite;
+}

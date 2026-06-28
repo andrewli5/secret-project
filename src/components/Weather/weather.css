@@ -1,0 +1,14 @@
+@keyframes weather-icon-drift {
+  0%,
+  100% {
+    transform: translate(-10%, 0%);
+  }
+
+  50% {
+    transform: translate(10%, 0%);
+  }
+}
+
+.weather-icon-drift {
+  animation: weather-icon-drift 40s ease-in-out infinite;
+}

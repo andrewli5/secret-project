@@ -1,5 +1,5 @@
 import { GEIST_FONT } from '@/theme';
-import { Box, Card, Divider, Group, Stack, Text } from '@mantine/core';
+import { Box, Divider, Group, Stack, Text } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { WidgetCard } from '../WidgetCard';
 
@@ -62,41 +62,39 @@ export const Clock = () => {
   const formatTwoDigits = (n: number) => n.toString().padStart(2, '0');
 
   return (
-    <WidgetCard>
-      <Card.Section p="sm">
-        <Stack align="center" gap={10}>
-          <Text size="2.5rem">
-            {time.toLocaleDateString(undefined, {
-              weekday: 'long',
-              month: 'long',
-              day: 'numeric',
-            })}
+    <WidgetCard p="xs">
+      <Stack align="center" gap={10}>
+        <Text size="2.5rem">
+          {time.toLocaleDateString(undefined, {
+            weekday: 'long',
+            month: 'long',
+            day: 'numeric',
+          })}
+        </Text>
+        <Divider w="100%" />
+        <Group gap={0} align="baseline">
+          <Text
+            size="9rem"
+            fw={300}
+            style={{
+              fontFamily: GEIST_FONT,
+              fontVariantNumeric: 'tabular-nums',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {displayHours}:{formatTwoDigits(minutes)}
           </Text>
-          <Divider w="100%" />
-          <Group gap={0} align="baseline">
-            <Text
-              size="9rem"
-              fw={300}
-              style={{
-                fontFamily: GEIST_FONT,
-                fontVariantNumeric: 'tabular-nums',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {displayHours}:{formatTwoDigits(minutes)}
-            </Text>
-            <Text span size="3rem" c="dimmed">
-              {isPM ? 'PM' : 'AM'}
-            </Text>
-          </Group>
-          <Divider w="100%" />
-          <Group gap={6} justify="center" w="100%">
-            {WEEKDAYS.map((day, i) => (
-              <DayCell key={day} label={day} date={weekDates[i]} isToday={i === today} />
-            ))}
-          </Group>
-        </Stack>
-      </Card.Section>
+          <Text span size="3rem" c="dimmed">
+            {isPM ? 'PM' : 'AM'}
+          </Text>
+        </Group>
+        <Divider w="100%" />
+        <Group gap={6} justify="center" w="100%">
+          {WEEKDAYS.map((day, i) => (
+            <DayCell key={day} label={day} date={weekDates[i]} isToday={i === today} />
+          ))}
+        </Group>
+      </Stack>
     </WidgetCard>
   );
 };

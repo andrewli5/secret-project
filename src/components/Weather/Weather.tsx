@@ -4,9 +4,10 @@ import { WeatherIcon } from '@/assets/weather/weatherIcons';
 import { getWeatherText } from '@/assets/weather/weatherText';
 import { adjustWeatherCode, getWeatherData, type WeatherData } from '@/clients/nws/weather';
 import { usePolledData } from '@/hooks/usePolledData';
-import { GEIST_FONT } from '@/theme';
+import { GEIST_FONT, NEUMORPHIC_RAISED_SUBTLE } from '@/theme';
 import { Figure } from '../Figure';
 import { WidgetCard } from '../WidgetCard';
+import './weather.css';
 
 const WEATHER_REFRESH_MS = 5 * 60 * 1000;
 
@@ -97,11 +98,26 @@ export function Weather() {
 
   return (
     <WidgetCard style={{ position: 'relative', overflow: 'hidden' }}>
+      <Box
+        pos="absolute"
+        top={-90}
+        right={0}
+        aria-hidden
+        className="weather-icon-drift"
+        style={{
+          opacity: 0.1,
+          pointerEvents: 'none',
+        }}
+      >
+        <WeatherIcon
+          size={400}
+          code={wmoCode}
+          isDay={weatherData.current.is_day}
+          animated={false}
+        />
+      </Box>
       <Stack gap={0} pos="relative" style={{ zIndex: 1 }}>
-        <Group gap={10}>
-          <WeatherIcon size={70} code={wmoCode} isDay={weatherData.current.is_day} />
-          <Text size="3rem">{getWeatherText(wmoCode)}</Text>
-        </Group>
+        <Text size="3rem">{getWeatherText(wmoCode)}</Text>
         <Group gap={50} wrap="nowrap">
           <Box>
             <Figure
@@ -112,7 +128,17 @@ export function Weather() {
               fw={300}
             />
           </Box>
-          <Paper radius="lg" p="md" bg="var(--mantine-color-default-hover)">
+          <Paper
+            radius="lg"
+            p="md"
+            bg="color-mix(in srgb, var(--mantine-color-default-hover) 18%, transparent)"
+            style={{
+              ...NEUMORPHIC_RAISED_SUBTLE,
+              border: '1px solid rgba(255, 255, 255, 0.05)',
+              backdropFilter: 'blur(14px)',
+              WebkitBackdropFilter: 'blur(14px)',
+            }}
+          >
             <Stack gap={3}>
               {detailRows(weatherData).map(({ label, color, value }) => (
                 <Group key={label} gap={20} wrap="nowrap">

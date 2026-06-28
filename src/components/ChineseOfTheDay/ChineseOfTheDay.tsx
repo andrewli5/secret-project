@@ -18,15 +18,20 @@ export function ChineseOfTheDay() {
   const word = getTodaysWord();
 
   return (
-    <WidgetCard>
-      <Stack gap="md" p="md">
-        <Group wrap="nowrap" gap="sm" align="center" style={{ containerType: 'inline-size' }}>
+    <WidgetCard p="xs">
+      <Group align="flex-start" gap="md" wrap="wrap">
+        <Group
+          wrap="nowrap"
+          gap="xs"
+          align="center"
+          style={{ containerType: 'inline-size', flex: '1 1 16rem' }}
+        >
           <Text
             fw={300}
             lh={1}
             style={{
               fontFamily: CHINESE_FONT,
-              fontSize: `clamp(3.5rem, ${24 / Math.max(word.simplified.length, 1)}cqi, 6rem)`,
+              fontSize: `clamp(3.25rem, ${22 / Math.max(word.simplified.length, 1)}cqi, 5.25rem)`,
               whiteSpace: 'nowrap',
               flexShrink: 0,
             }}
@@ -34,31 +39,30 @@ export function ChineseOfTheDay() {
             {word.simplified}
           </Text>
           <Divider orientation="vertical" />
-          <Stack gap={4}>
-            <Text size="1.2rem" c="dimmed" tt="lowercase">
+          <Stack gap={2}>
+            <Text size="lg" c="dimmed" tt="lowercase">
               chinese of the day
             </Text>
-            <Text size="2.75rem" fw={500} style={{ fontFamily: GEIST_FONT }}>
+            <Text size="2.25rem" fw={500} style={{ fontFamily: GEIST_FONT }}>
               {word.pinyin}
             </Text>
-            <Text size="1.5rem" c="dimmed">
+            <Text size="xl" c="dimmed">
               {word.english}
             </Text>
           </Stack>
         </Group>
-        <Divider />
-        <Stack gap="xs">
-          <Text fw={400} lh={1.4} style={{ fontFamily: CHINESE_FONT, fontSize: '2rem' }}>
+        <Stack gap={2} style={{ flex: '1 1 16rem', minWidth: '12rem' }}>
+          <Text fw={400} lh={1.3} style={{ fontFamily: CHINESE_FONT, fontSize: '1.75rem' }}>
             {word.sentence.simplified}
           </Text>
-          <Text size="1.35rem" fw={500} style={{ fontFamily: GEIST_FONT }}>
+          <Text size="xl" fw={500} style={{ fontFamily: GEIST_FONT }}>
             {word.sentence.pinyin}
           </Text>
-          <Text size="1.2rem" c="dimmed">
+          <Text size="lg" c="dimmed">
             {word.sentence.english}
           </Text>
         </Stack>
-      </Stack>
+      </Group>
     </WidgetCard>
   );
 }

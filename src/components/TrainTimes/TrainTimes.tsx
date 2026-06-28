@@ -14,6 +14,7 @@ import {
 import { useEffect, useState } from 'react';
 import { BsExclamationTriangleFill } from 'react-icons/bs';
 import MBTAIcon from '@/assets/mbta/MBTAIcon';
+import { NEUMORPHIC_RAISED_SUBTLE } from '@/theme';
 import { Figure } from '../Figure';
 import { WidgetCard } from '../WidgetCard';
 import { useTrainTimes } from './useTrainTimes';
@@ -110,8 +111,13 @@ function TrainTimeSlot({
   const liveDisplay = mode === 'live' && remaining != null ? liveCountdownDisplay(remaining) : null;
 
   return (
-    <Paper radius="lg" p="sm" bg="var(--mantine-color-default-hover)">
-      <Stack gap={4} align="center" justify="center" h="100%" py="sm">
+    <Paper
+      radius="lg"
+      p="sm"
+      bg="var(--mantine-color-default-hover)"
+      style={NEUMORPHIC_RAISED_SUBTLE}
+    >
+      <Stack gap={4} align="center" justify="center" h="100%">
         {mode === 'live' && (
           <Badge
             size="lg"
@@ -177,7 +183,7 @@ function DirectionLabel({
   routeLabel?: string;
 }) {
   return (
-    <Group gap="md" mt="sm" wrap="nowrap">
+    <Group gap="md" mt="xs" wrap="nowrap">
       <Badge
         ff="system-ui"
         size={routeLabel && routeLabel.length > 4 ? 'lg' : '2rem'}
@@ -222,7 +228,7 @@ function TrainSlotsDisplay({
   const figureSize = FIGURE_SIZE_BY_SLOT_COUNT[slots.length] ?? '3rem';
 
   return (
-    <Group w="100%" gap="sm" grow align="stretch" my="sm">
+    <Group w="100%" gap="sm" grow align="stretch" my="xs">
       {slots.map(({ i, arrivalIso, scheduledIso }) => (
         <TrainTimeSlot
           key={arrivalIso ?? scheduledIso ?? i}
