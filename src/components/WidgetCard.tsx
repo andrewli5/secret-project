@@ -1,8 +1,6 @@
 import { Card, Group, Text } from '@mantine/core';
 
 const cardStyle: React.CSSProperties = {
-  // Dark-surface neumorphism: deep shadow bottom-right + faint gray
-  // highlight top-left (NOT white — white halos on a dark bg).
   boxShadow: '4px 4px 12px rgba(0, 0, 0, 0.28), -3px -3px 9px rgba(255, 255, 255, 0.02)',
   border: '1px solid rgba(255, 255, 255, 0.06)',
 };

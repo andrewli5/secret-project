@@ -1,6 +1,6 @@
-import { Text, Group } from '@mantine/core';
-import { BsArrowClockwise } from 'react-icons/bs';
+import { Group, Text } from '@mantine/core';
 import { useEffect, useState } from 'react';
+import { BsArrowClockwise } from 'react-icons/bs';
 
 const pluralize = (count: number, unit: string) =>
   count === 1 ? `1 ${unit} ago` : `${count} ${unit}s ago`;

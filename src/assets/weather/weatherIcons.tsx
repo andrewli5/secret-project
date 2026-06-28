@@ -9,6 +9,10 @@ import Raindrops from '@bybas/weather-icons/design/fill/animation-ready/raindrop
 import Raindrop from '@bybas/weather-icons/design/fill/animation-ready/raindrop.svg';
 import Snowflake from '@bybas/weather-icons/design/fill/animation-ready/snowflake.svg';
 import Hail from '@bybas/weather-icons/design/fill/animation-ready/hail.svg';
+import Sleet from '@bybas/weather-icons/design/fill/animation-ready/sleet.svg';
+import Dust from '@bybas/weather-icons/design/fill/animation-ready/dust.svg';
+import Haze from '@bybas/weather-icons/design/fill/animation-ready/haze.svg';
+import Smoke from '@bybas/weather-icons/design/fill/animation-ready/smoke.svg';
 import Lightning from '@bybas/weather-icons/design/fill/animation-ready/lightning-bolt.svg';
 import NotAvailable from '@bybas/weather-icons/design/fill/animation-ready/not-available.svg';
 
@@ -23,6 +27,10 @@ import StaticRaindrops from '@bybas/weather-icons/design/fill/export/wi_raindrop
 import StaticRaindrop from '@bybas/weather-icons/design/fill/export/wi_raindrop.svg';
 import StaticSnowflake from '@bybas/weather-icons/design/fill/export/wi_snowflake.svg';
 import StaticHail from '@bybas/weather-icons/design/fill/export/wi_hail.svg';
+import StaticSleet from '@bybas/weather-icons/design/fill/export/wi_sleet.svg';
+import StaticDust from '@bybas/weather-icons/design/fill/export/wi_dust.svg';
+import StaticHaze from '@bybas/weather-icons/design/fill/export/wi_haze.svg';
+import StaticSmoke from '@bybas/weather-icons/design/fill/export/wi_smoke.svg';
 import StaticLightning from '@bybas/weather-icons/design/fill/export/wi_lightning-bolt.svg';
 
 import type { JSX } from 'react';
@@ -41,27 +49,32 @@ const wmoEntries: Record<number, IconEntry> = {
   1: dn(ClearDay, ClearNight, StaticClearDay, StaticClearNight),
   2: dn(PartlyCloudyDay, PartlyCloudyNight, StaticPartlyCloudyDay, StaticPartlyCloudyNight),
   3: all(Overcast, StaticOvercast),
+  4: all(Smoke, StaticSmoke),
+  5: all(Haze, StaticHaze),
+  6: all(Dust, StaticDust),
   45: dn(FogDay, FogNight, StaticFogDay, StaticFogNight),
   48: dn(FogDay, FogNight, StaticFogDay, StaticFogNight),
   51: all(Raindrops, StaticRaindrops),
   53: all(Raindrops, StaticRaindrops),
   55: all(Raindrops, StaticRaindrops),
-  56: all(Hail, StaticHail),
-  57: all(Hail, StaticHail),
+  56: all(Sleet, StaticSleet),
+  57: all(Sleet, StaticSleet),
   61: all(Raindrop, StaticRaindrop),
   63: all(Raindrops, StaticRaindrops),
   65: all(Raindrops, StaticRaindrops),
-  66: all(Hail, StaticHail),
-  67: all(Hail, StaticHail),
+  66: all(Sleet, StaticSleet),
+  67: all(Sleet, StaticSleet),
   71: all(Snowflake, StaticSnowflake),
   73: all(Snowflake, StaticSnowflake),
   75: all(Snowflake, StaticSnowflake),
   77: all(Snowflake, StaticSnowflake),
+  79: all(Sleet, StaticSleet),
   80: all(Raindrop, StaticRaindrop),
   81: all(Raindrops, StaticRaindrops),
   82: all(Raindrops, StaticRaindrops),
   85: all(Snowflake, StaticSnowflake),
   86: all(Snowflake, StaticSnowflake),
+  89: all(Hail, StaticHail),
   95: all(Lightning, StaticLightning),
   96: all(Lightning, StaticLightning),
   99: all(Lightning, StaticLightning),

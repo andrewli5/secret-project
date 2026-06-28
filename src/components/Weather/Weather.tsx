@@ -1,18 +1,18 @@
 import { WeatherIcon } from '@/assets/weather/weatherIcons';
 import { getWeatherText } from '@/assets/weather/weatherText';
-import { adjustWeatherCode, getWeatherData, type WeatherData } from '@/clients/openmeteo/weather';
+import { adjustWeatherCode, getWeatherData, type WeatherData } from '@/clients/nws/weather';
 import { usePolledData } from '@/hooks/usePolledData';
 import { GEIST_FONT } from '@/theme';
-import { Badge, Box, Card, Group, Paper, Skeleton, Stack, Text } from '@mantine/core';
-import { WidgetCard } from '../WidgetCard';
+import { Badge, Box, Card, Divider, Group, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { Figure } from '../Figure';
+import { WidgetCard } from '../WidgetCard';
 
 const WEATHER_REFRESH_MS = 5 * 60 * 1000;
 
-const detailRows = (weatherData?: WeatherData) => [
-  { label: 'feels', color: 'violet', value: weatherData?.current.apparent_temperature },
-  { label: 'high', color: 'red', value: weatherData?.daily.temperature_2m_max[0] },
-  { label: 'low', color: 'blue', value: weatherData?.daily.temperature_2m_min[0] },
+const detailRows = (weatherData: WeatherData) => [
+  { label: 'feels', color: 'violet', value: weatherData.current.apparent_temperature },
+  { label: 'high', color: 'red', value: weatherData.daily.temperature_2m_max[0] },
+  { label: 'low', color: 'blue', value: weatherData.daily.temperature_2m_min[0] },
 ];
 
 function WeatherForecast({ daily }: { daily: WeatherData['daily'] }) {
@@ -23,11 +23,9 @@ function WeatherForecast({ daily }: { daily: WeatherData['daily'] }) {
         const dayCode = adjustWeatherCode(
           daily.weather_code[idx] ?? 0,
           daily.precipitation_probability_max[idx] ?? 0,
-          daily.sunshine_duration[idx],
         );
         const high = Math.round(daily.temperature_2m_max[idx] ?? 0);
         const low = Math.round(daily.temperature_2m_min[idx] ?? 0);
-        const dayLabel = date.toLocaleDateString(undefined, { weekday: 'short' });
 
         return (
           <Stack
@@ -39,7 +37,7 @@ function WeatherForecast({ daily }: { daily: WeatherData['daily'] }) {
             bdrs="md"
           >
             <Text size="xs" c="dimmed" ff="system-ui">
-              {dayLabel}
+              {date.toLocaleDateString(undefined, { weekday: 'short' })}
             </Text>
             <WeatherIcon size={28} code={dayCode} isDay animated={false} />
             <Text size="xs" fw={600} style={{ fontFamily: GEIST_FONT }}>
@@ -90,23 +88,22 @@ export function Weather() {
     return <WeatherSkeleton />;
   }
 
-  const rawCode = weatherData.current.weather_code ?? 0;
-  const currentPrecipProb = weatherData.daily.precipitation_probability_max[0] ?? 0;
-  const currentSunshine = weatherData.daily.sunshine_duration[0] ?? 0;
-  const wmoCode = adjustWeatherCode(rawCode, currentPrecipProb, currentSunshine);
-  const isDay = weatherData.current.is_day ?? false;
+  const wmoCode = adjustWeatherCode(
+    weatherData.current.weather_code,
+    weatherData.daily.precipitation_probability_max[0] ?? 0,
+  );
 
   return (
     <WidgetCard style={{ position: 'relative', overflow: 'hidden' }}>
       <Stack gap={0} pos="relative" style={{ zIndex: 1 }}>
         <Group gap={10}>
-          <WeatherIcon size={70} code={wmoCode} isDay={isDay} animated={true} />
+          <WeatherIcon size={70} code={wmoCode} isDay={weatherData.current.is_day} />
           <Text size="3rem">{getWeatherText(wmoCode)}</Text>
         </Group>
         <Group gap={50} wrap="nowrap">
           <Box>
             <Figure
-              figure={Math.round(weatherData.current.temperature_2m ?? 0).toString()}
+              figure={Math.round(weatherData.current.temperature_2m).toString()}
               unit="°f"
               unitSize="3.5rem"
               size="12rem"
@@ -131,8 +128,8 @@ export function Weather() {
             </Stack>
           </Paper>
         </Group>
-        {/* <Divider />
-        <WeatherForecast daily={weatherData.daily} /> */}
+        <Divider my="md" />
+        <WeatherForecast daily={weatherData.daily} />
       </Stack>
     </WidgetCard>
   );

@@ -7,7 +7,6 @@ const REFRESH_MS = 1000;
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-/** Day-of-month numbers for the Sun-Sat week containing `date`, handling month/year rollover. */
 export const weekDatesFor = (date: Date): number[] =>
   WEEKDAYS.map((_, i) => {
     const d = new Date(date);
