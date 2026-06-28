@@ -1,17 +1,23 @@
 import { getShuttleAlert } from '@/clients/mbta/alerts';
-import { getNextThreeArrivalsInMinutes } from '@/clients/mbta/predictions';
+import { getNextThreeArrivalTimes } from '@/clients/mbta/predictions';
 import { getRouteData } from '@/clients/mbta/routes';
+import { getNextThreeScheduledDepartures } from '@/clients/mbta/schedules';
 import { getStopData } from '@/clients/mbta/stops';
 import { usePolledData } from '@/hooks/usePolledData';
 import { useCallback } from 'react';
 
 const LIVE_REFRESH_MS = 10 * 1000;
+const SCHEDULE_REFRESH_MS = 5 * 60 * 1000;
 
 type Args = {
   stopId: string;
   directionIds: number[];
   routeId: string;
 };
+
+function indexByDirectionId<T>(directionIds: number[], values: T[]): Record<number, T> {
+  return Object.fromEntries(directionIds.map((directionId, index) => [directionId, values[index]]));
+}
 
 export function useTrainTimes({ stopId, directionIds, routeId }: Args) {
   const fetchStatic = useCallback(async () => {
@@ -20,31 +26,41 @@ export function useTrainTimes({ stopId, directionIds, routeId }: Args) {
   }, [stopId, routeId]);
 
   const fetchLive = useCallback(async () => {
-    const [arrivals, shuttleAlert] = await Promise.all([
+    const [arrivalLists, shuttleAlert] = await Promise.all([
       Promise.all(
         directionIds.map((directionId) =>
-          getNextThreeArrivalsInMinutes({ stopId, directionId, routeId }),
+          getNextThreeArrivalTimes({ stopId, directionId, routeId }),
         ),
       ),
       getShuttleAlert({ stopId, routeId }),
     ]);
 
-    const mins: Record<number, number[]> = {};
-    directionIds.forEach((directionId, index) => {
-      mins[directionId] = arrivals[index];
-    });
+    return { arrivals: indexByDirectionId(directionIds, arrivalLists), shuttleAlert };
+  }, [stopId, directionIds, routeId]);
 
-    return { mins, shuttleAlert };
+  const fetchSchedules = useCallback(async () => {
+    const departures = await Promise.all(
+      directionIds.map((directionId) =>
+        getNextThreeScheduledDepartures({ stopId, directionId, routeId }),
+      ),
+    );
+
+    return { scheduled: indexByDirectionId(directionIds, departures) };
   }, [stopId, directionIds, routeId]);
 
   const { data: staticData, error: staticError } = usePolledData(fetchStatic);
   const { data: liveData, error: liveError } = usePolledData(fetchLive, LIVE_REFRESH_MS);
+  const { data: scheduleData, error: scheduleError } = usePolledData(
+    fetchSchedules,
+    SCHEDULE_REFRESH_MS,
+  );
 
   return {
     stop: staticData?.stop,
     route: staticData?.route,
-    mins: liveData?.mins,
+    arrivals: liveData?.arrivals,
+    scheduled: scheduleData?.scheduled,
     shuttleAlert: liveData?.shuttleAlert ?? null,
-    error: staticError ?? liveError,
+    error: staticError ?? liveError ?? scheduleError,
   };
 }

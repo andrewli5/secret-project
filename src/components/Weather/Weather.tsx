@@ -1,9 +1,10 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { Badge, Box, Card, Divider, Group, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { WeatherIcon } from '@/assets/weather/weatherIcons';
 import { getWeatherText } from '@/assets/weather/weatherText';
 import { adjustWeatherCode, getWeatherData, type WeatherData } from '@/clients/nws/weather';
 import { usePolledData } from '@/hooks/usePolledData';
 import { GEIST_FONT } from '@/theme';
-import { Badge, Box, Card, Divider, Group, Paper, Skeleton, Stack, Text } from '@mantine/core';
 import { Figure } from '../Figure';
 import { WidgetCard } from '../WidgetCard';
 
@@ -15,6 +16,7 @@ const detailRows = (weatherData: WeatherData) => [
   { label: 'low', color: 'blue', value: weatherData.daily.temperature_2m_min[0] },
 ];
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function WeatherForecast({ daily }: { daily: WeatherData['daily'] }) {
   return (
     <Group grow gap="xs" wrap="nowrap">
@@ -128,8 +130,8 @@ export function Weather() {
             </Stack>
           </Paper>
         </Group>
-        <Divider my="md" />
-        <WeatherForecast daily={weatherData.daily} />
+        {/* <Divider my="md" />
+        <WeatherForecast daily={weatherData.daily} /> */}
       </Stack>
     </WidgetCard>
   );

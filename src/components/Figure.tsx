@@ -1,5 +1,5 @@
-import { GEIST_FONT } from '@/theme';
 import { Text } from '@mantine/core';
+import { GEIST_FONT } from '@/theme';
 
 type Props = {
   figure?: string;
@@ -11,12 +11,9 @@ type Props = {
 };
 
 export const Figure = ({ figure, unit, size, unitSize, my, fw }: Props) => {
-  const length = figure?.length ?? 0;
-  const resolvedSize = size && length >= 3 ? `calc(${size} * ${2 / length})` : (size ?? 'xl');
-
   return (
     <Text
-      size={resolvedSize}
+      size={size}
       fw={fw}
       my={my}
       c={figure ? undefined : 'dimmed'}

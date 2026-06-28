@@ -47,7 +47,7 @@ export function ChineseOfTheDay() {
           </Stack>
         </Group>
         <Divider />
-        <Stack gap={4}>
+        <Stack gap="xs">
           <Text fw={400} lh={1.4} style={{ fontFamily: CHINESE_FONT, fontSize: '2rem' }}>
             {word.sentence.simplified}
           </Text>
