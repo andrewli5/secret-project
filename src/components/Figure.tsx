@@ -25,7 +25,12 @@ export const Figure = ({ figure, unit, size, unitSize, my, fw }: Props) => {
     >
       {figure || '--'}
       {unit && (
-        <Text span size={unitSize ?? 'md'} c="dimmed">
+        <Text
+          span
+          size={unitSize ?? 'md'}
+          c="dimmed"
+          style={{ fontFamily: GEIST_FONT, fontVariantNumeric: 'tabular-nums' }}
+        >
           {` ${unit}`}
         </Text>
       )}

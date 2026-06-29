@@ -13,7 +13,13 @@ export default function App() {
   return (
     <MantineProvider theme={theme} defaultColorScheme="dark">
       <DaylightBackground />
-      <Box pos="relative" mih="100vh" style={{ zIndex: 1 }}>
+      <Box
+        pos="relative"
+        mih="100vh"
+        w="100%"
+        display="flex"
+        style={{ alignItems: 'center', zIndex: 1, minWidth: 0, overflow: 'hidden' }}
+      >
         <Router />
       </Box>
     </MantineProvider>

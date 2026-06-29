@@ -186,13 +186,13 @@ function DirectionLabel({
     <Group gap="md" mt="xs" wrap="nowrap">
       <Badge
         ff="system-ui"
-        size={routeLabel && routeLabel.length > 4 ? 'lg' : '2rem'}
+        size={routeLabel && routeLabel.length > 4 ? 'xl' : '2.25rem'}
         color={`#${route?.color}`}
         c={`#${route?.text_color}`}
       >
         {routeLabel}
       </Badge>
-      <Text size="1.5rem" truncate>
+      <Text size="1.75rem" truncate>
         {route?.direction_destinations[directionId]}
       </Text>
     </Group>

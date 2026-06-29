@@ -125,7 +125,6 @@ export function Weather() {
               unit="°f"
               unitSize="3.5rem"
               size="12rem"
-              fw={300}
             />
           </Box>
           <Paper
@@ -148,7 +147,7 @@ export function Weather() {
                   <Figure
                     figure={Math.round(value ?? 0).toString()}
                     unit="°f"
-                    unitSize="1.2rem"
+                    unitSize="sm"
                     size="2rem"
                   />
                 </Group>

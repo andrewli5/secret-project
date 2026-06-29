@@ -1,6 +1,6 @@
-import { GEIST_FONT } from '@/theme';
 import { Box, Divider, Group, Stack, Text } from '@mantine/core';
 import { useEffect, useState } from 'react';
+import { Figure } from '../Figure';
 import { WidgetCard } from '../WidgetCard';
 
 const REFRESH_MS = 1000;
@@ -72,21 +72,13 @@ export const Clock = () => {
           })}
         </Text>
         <Divider w="100%" />
-        <Group gap={0} align="baseline">
-          <Text
-            size="9rem"
-            fw={300}
-            style={{
-              fontFamily: GEIST_FONT,
-              fontVariantNumeric: 'tabular-nums',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {displayHours}:{formatTwoDigits(minutes)}
-          </Text>
-          <Text span size="3rem" c="dimmed">
-            {isPM ? 'PM' : 'AM'}
-          </Text>
+        <Group gap={0} align="baseline" wrap="nowrap">
+          <Figure
+            figure={`${displayHours}:${formatTwoDigits(minutes)}`}
+            unit={isPM ? 'PM' : 'AM'}
+            unitSize="3.25rem"
+            size="10rem"
+          />
         </Group>
         <Divider w="100%" />
         <Group gap={6} justify="center" w="100%">
