@@ -1,20 +1,53 @@
 import { chineseWords } from '@/data/chineseWords';
 import { GEIST_FONT } from '@/theme';
 import { Divider, Group, Stack, Text } from '@mantine/core';
+import { useEffect, useState } from 'react';
 import { WidgetCard } from '../WidgetCard';
 
 const EPOCH = new Date(2025, 0, 1).getTime();
 const MS_PER_DAY = 86_400_000;
+const REFRESH_MS = 60_000;
 const CHINESE_FONT = '"Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif';
 
+function getDayIndex() {
+  return Math.floor((Date.now() - EPOCH) / MS_PER_DAY);
+}
+
 export function getTodaysWord() {
-  const dayIndex = Math.floor((Date.now() - EPOCH) / MS_PER_DAY);
+  const dayIndex = getDayIndex();
   return chineseWords[
     ((dayIndex % chineseWords.length) + chineseWords.length) % chineseWords.length
   ];
 }
 
 export function ChineseOfTheDay() {
+  const [, setTick] = useState(0);
+
+  useEffect(() => {
+    let dayIndex = getDayIndex();
+
+    const sync = () => {
+      const next = getDayIndex();
+      if (next !== dayIndex) {
+        dayIndex = next;
+        setTick((tick) => tick + 1);
+      }
+    };
+
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') {
+        sync();
+      }
+    };
+
+    document.addEventListener('visibilitychange', onVisible);
+    const intervalId = setInterval(sync, REFRESH_MS);
+    return () => {
+      document.removeEventListener('visibilitychange', onVisible);
+      clearInterval(intervalId);
+    };
+  }, []);
+
   const word = getTodaysWord();
 
   return (

@@ -105,6 +105,7 @@ function TrainTimeSlot({
   scheduledIso?: string;
   figureSize: string;
 }) {
+  const isEmpty = arrivalIso == null && scheduledIso == null;
   const remaining = useRemainingSeconds(arrivalIso);
   const mode = slotMode(arrivalIso, scheduledIso);
   const { figure, unit } = slotDisplay(scheduledIso);
@@ -113,50 +114,59 @@ function TrainTimeSlot({
   return (
     <Paper
       radius="lg"
-      p="sm"
+      px="sm"
+      py={isEmpty ? 'xl' : 'sm'}
       bg="var(--mantine-color-default-hover)"
       style={NEUMORPHIC_RAISED_SUBTLE}
     >
       <Stack gap={4} align="center" justify="center" h="100%">
-        {mode === 'live' && (
-          <Badge
-            size="lg"
-            variant="light"
-            color="green"
-            ff="system-ui"
-            leftSection={
-              <Indicator processing inline color="green" size={8} withBorder={false} mr={6}>
-                <Box w={0} h={0} aria-hidden />
-              </Indicator>
-            }
-          >
-            live
-          </Badge>
-        )}
-        {mode === 'scheduled' && (
-          <Badge size="lg" variant="light" ff="system-ui">
-            scheduled
-          </Badge>
-        )}
-        {liveDisplay ? (
-          <Group gap="xs" wrap="nowrap">
-            <Figure
-              figure={liveDisplay.mins}
-              unit={liveDisplay.minsUnit}
-              size={figureSize}
-              unitSize="sm"
-            />
-            {'secs' in liveDisplay && (
-              <Figure
-                figure={liveDisplay.secs}
-                unit={liveDisplay.secsUnit}
-                size={figureSize}
-                unitSize="sm"
-              />
-            )}
-          </Group>
+        {isEmpty ? (
+          <Text size="xl" c="dimmed" ff="system-ui" tt="lowercase">
+            no trains
+          </Text>
         ) : (
-          <Figure figure={figure} unit={unit} size={figureSize} unitSize="sm" />
+          <>
+            {mode === 'live' && (
+              <Badge
+                size="lg"
+                variant="light"
+                color="green"
+                ff="system-ui"
+                leftSection={
+                  <Indicator processing inline color="green" size={8} withBorder={false} mr={6}>
+                    <Box w={0} h={0} aria-hidden />
+                  </Indicator>
+                }
+              >
+                live
+              </Badge>
+            )}
+            {mode === 'scheduled' && (
+              <Badge size="lg" variant="light" ff="system-ui">
+                scheduled
+              </Badge>
+            )}
+            {liveDisplay ? (
+              <Group gap="xs" wrap="nowrap">
+                <Figure
+                  figure={liveDisplay.mins}
+                  unit={liveDisplay.minsUnit}
+                  size={figureSize}
+                  unitSize="sm"
+                />
+                {'secs' in liveDisplay && (
+                  <Figure
+                    figure={liveDisplay.secs}
+                    unit={liveDisplay.secsUnit}
+                    size={figureSize}
+                    unitSize="sm"
+                  />
+                )}
+              </Group>
+            ) : (
+              <Figure figure={figure} unit={unit} size={figureSize} unitSize="sm" />
+            )}
+          </>
         )}
       </Stack>
     </Paper>
@@ -225,18 +235,22 @@ function TrainSlotsDisplay({
 
   const departures = scheduled?.[directionId] ?? [];
   const slots = existingSlots(arrivals[directionId], departures);
-  const figureSize = FIGURE_SIZE_BY_SLOT_COUNT[slots.length] ?? '3rem';
+  const figureSize = FIGURE_SIZE_BY_SLOT_COUNT[Math.max(slots.length, 1)] ?? '3rem';
 
   return (
     <Group w="100%" gap="sm" grow align="stretch" my="xs">
-      {slots.map(({ i, arrivalIso, scheduledIso }) => (
-        <TrainTimeSlot
-          key={arrivalIso ?? scheduledIso ?? i}
-          arrivalIso={arrivalIso}
-          scheduledIso={scheduledIso}
-          figureSize={figureSize}
-        />
-      ))}
+      {slots.length === 0 ? (
+        <TrainTimeSlot figureSize={figureSize} />
+      ) : (
+        slots.map(({ i, arrivalIso, scheduledIso }) => (
+          <TrainTimeSlot
+            key={arrivalIso ?? scheduledIso ?? i}
+            arrivalIso={arrivalIso}
+            scheduledIso={scheduledIso}
+            figureSize={figureSize}
+          />
+        ))
+      )}
     </Group>
   );
 }
