@@ -4,13 +4,18 @@ import { Divider, Group, Stack, Text } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { WidgetCard } from '../WidgetCard';
 
-const EPOCH = new Date(2025, 0, 1).getTime();
 const MS_PER_DAY = 86_400_000;
 const REFRESH_MS = 60_000;
 const CHINESE_FONT = '"Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif';
 
+// We diff Date.UTC(y, m, d) values instead of raw timestamps because those just
+// encode the calendar date, with no timezone or DST involved. That keeps the
+// day count exact even when the clocks shift forward or back for DST.
 function getDayIndex() {
-  return Math.floor((Date.now() - EPOCH) / MS_PER_DAY);
+  const now = new Date();
+  const today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+  const epoch = Date.UTC(2025, 0, 1);
+  return Math.round((today - epoch) / MS_PER_DAY);
 }
 
 export function getTodaysWord() {
