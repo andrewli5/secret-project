@@ -91,10 +91,7 @@ export function Weather() {
     return <WeatherSkeleton />;
   }
 
-  const wmoCode = adjustWeatherCode(
-    weatherData.current.weather_code,
-    weatherData.daily.precipitation_probability_max[0] ?? 0,
-  );
+  const wmoCode = weatherData.current.weather_code;
 
   return (
     <WidgetCard style={{ position: 'relative', overflow: 'hidden' }}>

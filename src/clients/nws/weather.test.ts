@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   adjustWeatherCode,
   gridWeatherToWmoCode,
+  observationTextToWmoCode,
   parseDurationMs,
   resolveWmoCode,
   valueAt,
@@ -42,10 +43,23 @@ describe('resolveWmoCode', () => {
   it('prefers precip weather over sky cover', () => {
     expect(resolveWmoCode([{ weather: 'rain', intensity: 'moderate' }], 95)).toBe(63);
   });
+
+  it('ignores low-confidence "chance" mentions and falls back to sky cover', () => {
+    const cells = [{ weather: 'thunderstorms', intensity: null, coverage: 'chance' }];
+    expect(resolveWmoCode(cells, 10)).toBe(0);
+  });
 });
 
 describe('adjustWeatherCode', () => {
   it('upgrades clear sky to rain when PoP is high', () => {
     expect(adjustWeatherCode(0, 80)).toBe(61);
+  });
+});
+
+describe('observationTextToWmoCode', () => {
+  it('maps station observation text to a WMO code, respecting intensity', () => {
+    expect(observationTextToWmoCode('Thunderstorm')).toBe(95);
+    expect(observationTextToWmoCode('Light Rain')).toBe(61);
+    expect(observationTextToWmoCode('Mostly Clear')).toBeUndefined();
   });
 });

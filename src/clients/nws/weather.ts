@@ -42,6 +42,17 @@ export function adjustWeatherCode(code: number, precipitationProbability: number
   return code;
 }
 
+// Coverage qualifiers below "likely" (e.g. a "chance" of thunderstorms somewhere
+// in an 11-hour window) shouldn't be reported as active weather.
+const LOW_CONFIDENCE_COVERAGE = new Set([
+  'slight_chance',
+  'chance',
+  'isolated',
+  'scattered',
+  'areas',
+  'patchy',
+]);
+
 const cToF = (c: number): number => (c * 9) / 5 + 32;
 
 // biome-ignore lint/suspicious/noExplicitAny: external NWS JSON has no useful static shape
@@ -120,10 +131,10 @@ const INTENSITY_VARIANTS: Record<number, { light?: number; heavy?: number }> = {
   85: { heavy: 86 },
 };
 
-type WeatherCell = { weather: string | null; intensity: string | null };
+type WeatherCell = { weather: string | null; intensity: string | null; coverage?: string | null };
 
 export function gridWeatherToWmoCode(cells: WeatherCell[] | null | undefined): number {
-  const cell = cells?.find((c) => c.weather);
+  const cell = cells?.find((c) => c.weather && !LOW_CONFIDENCE_COVERAGE.has(c.coverage ?? ''));
   if (!cell?.weather) {
     return 0;
   }
@@ -157,11 +168,106 @@ export function resolveWmoCode(
   cells: WeatherCell[] | null | undefined,
   skyCoverPercent: number | null | undefined,
 ): number {
-  if (cells?.some((c) => c.weather)) {
-    return gridWeatherToWmoCode(cells);
+  const gridCode = gridWeatherToWmoCode(cells);
+  if (gridCode !== 0) {
+    return gridCode;
   }
   return skyCoverToWmoCode(skyCoverPercent);
 }
+
+type StationObservation = {
+  textDescription: string | null;
+  temperatureC: number | null;
+  apparentTemperatureC: number | null;
+  cloudLayerAmounts: (string | null)[];
+};
+
+const CLOUD_AMOUNT_TO_PERCENT: Record<string, number> = {
+  SKC: 0,
+  CLR: 0,
+  FEW: 15,
+  SCT: 40,
+  BKN: 75,
+  OVC: 100,
+  VV: 100,
+};
+
+function cloudLayersToSkyCoverPercent(amounts: (string | null)[]): number {
+  return amounts.reduce(
+    (max, amount) => Math.max(max, CLOUD_AMOUNT_TO_PERCENT[amount ?? ''] ?? 0),
+    0,
+  );
+}
+
+const TEXT_WEATHER_CODES: [pattern: RegExp, code: number][] = [
+  [/thunderstorm/i, 95],
+  [/freezing drizzle/i, 56],
+  [/freezing rain/i, 66],
+  [/drizzle/i, 53],
+  [/snow/i, 73],
+  [/sleet|ice pellets/i, 79],
+  [/hail/i, 89],
+  [/rain|showers/i, 63],
+  [/fog|mist/i, 45],
+  [/haze/i, 5],
+  [/smoke/i, 4],
+  [/dust|sand/i, 6],
+];
+
+export function observationTextToWmoCode(text: string | null | undefined): number | undefined {
+  if (!text) {
+    return undefined;
+  }
+  for (const [pattern, code] of TEXT_WEATHER_CODES) {
+    if (!pattern.test(text)) {
+      continue;
+    }
+    const variants = INTENSITY_VARIANTS[code];
+    if (variants) {
+      if (/light/i.test(text) && variants.light != null) {
+        return variants.light;
+      }
+      if (/heavy/i.test(text) && variants.heavy != null) {
+        return variants.heavy;
+      }
+    }
+    return code;
+  }
+  return undefined;
+}
+
+function resolveObservationWmoCode(observation: StationObservation): number {
+  return (
+    observationTextToWmoCode(observation.textDescription) ??
+    skyCoverToWmoCode(cloudLayersToSkyCoverPercent(observation.cloudLayerAmounts))
+  );
+}
+
+const fetchLatestObservation = async (gridUrl: string): Promise<StationObservation | undefined> => {
+  try {
+    const stations = await fetchJson(`${gridUrl}/stations`);
+    const stationId = stations?.features?.[0]?.properties?.stationIdentifier;
+    if (!stationId) {
+      return undefined;
+    }
+    const obs = await fetchJson(`${NWS_BASE}/stations/${stationId}/observations/latest`);
+    const p = obs?.properties;
+    if (!p) {
+      return undefined;
+    }
+    return {
+      textDescription: p.textDescription ?? null,
+      temperatureC: p.temperature?.value ?? null,
+      apparentTemperatureC:
+        p.heatIndex?.value ?? p.windChill?.value ?? p.temperature?.value ?? null,
+      cloudLayerAmounts: (p.cloudLayers ?? []).map(
+        (l: { amount?: string | null }) => l?.amount ?? null,
+      ),
+    };
+  } catch {
+    return undefined;
+  }
+};
 
 function isDaytimeAt(at: number): boolean {
   const hour = new Date(at).getHours();
@@ -198,7 +304,10 @@ function dailyByDate(values: GridValue<number>[]): Map<string, number> {
 
 export const getWeatherData = async (): Promise<WeatherData> => {
   const gridUrl = await findGridUrl(ALLSTON_COORDS);
-  const grid = await fetchJson(gridUrl);
+  const [grid, observation] = await Promise.all([
+    fetchJson(gridUrl),
+    fetchLatestObservation(gridUrl),
+  ]);
   const p = grid?.properties;
   if (!p) {
     throw new Error('NWS forecastGridData response missing properties');
@@ -207,12 +316,18 @@ export const getWeatherData = async (): Promise<WeatherData> => {
   const layer = <T>(name: string): GridValue<T>[] => p[name]?.values ?? [];
   const now = Date.now();
 
-  const curTempC = valueAt<number>(layer('temperature'), now);
-  const curFeelsC = valueAt<number>(layer('apparentTemperature'), now);
-  const curWeather = valueAt<WeatherCell[]>(layer('weather'), now);
-  const curSky = valueAt<number>(layer('skyCover'), now);
   const curPop = valueAt<number>(layer('probabilityOfPrecipitation'), now);
+
+  const curTempC = observation?.temperatureC ?? valueAt<number>(layer('temperature'), now);
+  const curFeelsC =
+    observation?.apparentTemperatureC ?? valueAt<number>(layer('apparentTemperature'), now);
   const currentTempF = curTempC != null ? cToF(curTempC) : 0;
+  const currentWmoCode = observation
+    ? resolveObservationWmoCode(observation)
+    : resolveWmoCode(
+        valueAt<WeatherCell[]>(layer('weather'), now),
+        valueAt<number>(layer('skyCover'), now),
+      );
 
   const highs = dailyByDate(layer<number>('maxTemperature'));
   const lows = dailyByDate(layer<number>('minTemperature'));
@@ -247,7 +362,7 @@ export const getWeatherData = async (): Promise<WeatherData> => {
       temperature_2m: currentTempF,
       apparent_temperature: curFeelsC != null ? cToF(curFeelsC) : currentTempF,
       is_day: isDaytimeAt(now),
-      weather_code: resolveWmoCode(curWeather, curSky),
+      weather_code: currentWmoCode,
       precipitation: curPop ?? 0,
     },
     daily: {
