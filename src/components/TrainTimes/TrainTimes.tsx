@@ -72,22 +72,15 @@ export function slotDisplay(scheduledIso?: string): SlotDisplay {
   return {};
 }
 
-function useRemainingSeconds(arrivalIso?: string) {
-  const [seconds, setSeconds] = useState<number>();
+function useCurrentTime() {
+  const [now, setNow] = useState(Date.now);
 
   useEffect(() => {
-    if (!arrivalIso) {
-      setSeconds(undefined);
-      return;
-    }
-
-    const tick = () => setSeconds(remainingSeconds(arrivalIso));
-    tick();
-    const id = setInterval(tick, 1000);
+    const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
-  }, [arrivalIso]);
+  }, []);
 
-  return seconds;
+  return now;
 }
 
 const FIGURE_SIZE_BY_SLOT_COUNT: Record<number, string> = {
@@ -100,13 +93,15 @@ function TrainTimeSlot({
   arrivalIso,
   scheduledIso,
   figureSize,
+  now,
 }: {
   arrivalIso?: string;
   scheduledIso?: string;
   figureSize: string;
+  now: number;
 }) {
   const isEmpty = arrivalIso == null && scheduledIso == null;
-  const remaining = useRemainingSeconds(arrivalIso);
+  const remaining = arrivalIso ? remainingSeconds(arrivalIso, now) : undefined;
   const mode = slotMode(arrivalIso, scheduledIso);
   const { figure, unit } = slotDisplay(scheduledIso);
   const liveDisplay = mode === 'live' && remaining != null ? liveCountdownDisplay(remaining) : null;
@@ -173,9 +168,20 @@ function TrainTimeSlot({
   );
 }
 
-function existingSlots(arrivalsForDirection: string[] | undefined, departures: string[]) {
+export function existingSlots(
+  arrivalsForDirection: string[] | undefined,
+  departures: string[],
+  now = Date.now(),
+) {
+  const upcoming = (iso: string | undefined) =>
+    iso != null && new Date(iso).getTime() > now ? iso : undefined;
+
   return [0, 1, 2]
-    .map((i) => ({ i, arrivalIso: arrivalsForDirection?.[i], scheduledIso: departures[i] }))
+    .map((i) => ({
+      i,
+      arrivalIso: upcoming(arrivalsForDirection?.[i]),
+      scheduledIso: upcoming(departures[i]),
+    }))
     .filter(({ arrivalIso, scheduledIso }) => arrivalIso != null || scheduledIso != null);
 }
 
@@ -215,6 +221,8 @@ function TrainSlotsDisplay({
   scheduled,
   error,
 }: { directionId: number } & TimesData) {
+  const now = useCurrentTime();
+
   if (error) {
     return (
       <Text c="red" role="alert">
@@ -234,13 +242,13 @@ function TrainSlotsDisplay({
   }
 
   const departures = scheduled?.[directionId] ?? [];
-  const slots = existingSlots(arrivals[directionId], departures);
+  const slots = existingSlots(arrivals[directionId], departures, now);
   const figureSize = FIGURE_SIZE_BY_SLOT_COUNT[Math.max(slots.length, 1)] ?? '3rem';
 
   return (
     <Group w="100%" gap="sm" grow align="stretch" my="xs">
       {slots.length === 0 ? (
-        <TrainTimeSlot figureSize={figureSize} />
+        <TrainTimeSlot figureSize={figureSize} now={now} />
       ) : (
         slots.map(({ i, arrivalIso, scheduledIso }) => (
           <TrainTimeSlot
@@ -248,6 +256,7 @@ function TrainSlotsDisplay({
             arrivalIso={arrivalIso}
             scheduledIso={scheduledIso}
             figureSize={figureSize}
+            now={now}
           />
         ))
       )}
