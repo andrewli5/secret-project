@@ -6,19 +6,24 @@ export function usePolledData<T>(fetcher: () => Promise<T>, intervalMs?: number)
 
   useEffect(() => {
     let cancelled = false;
+    let requestCount = 0;
+    let latestAppliedRequestId = 0;
 
     const load = async () => {
+      const requestId = ++requestCount;
       try {
         const next = await fetcher();
-        if (cancelled) {
+        if (cancelled || requestId < latestAppliedRequestId) {
           return;
         }
+        latestAppliedRequestId = requestId;
         setData(next);
         setError(undefined);
       } catch (err) {
-        if (cancelled) {
+        if (cancelled || requestId < latestAppliedRequestId) {
           return;
         }
+        latestAppliedRequestId = requestId;
         setError(err instanceof Error ? err : new Error(String(err)));
       }
     };

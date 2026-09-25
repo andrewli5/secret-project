@@ -53,9 +53,6 @@ export function slotMode(arrivalIso?: string, scheduledIso?: string): 'live' | '
 export function liveCountdownDisplay(totalSeconds: number) {
   const mins = Math.floor(totalSeconds / 60);
   const secs = totalSeconds % 60;
-  if (mins >= 10) {
-    return { mins: mins.toString(), minsUnit: 'min' as const };
-  }
   return {
     mins: mins.toString(),
     minsUnit: 'm' as const,
