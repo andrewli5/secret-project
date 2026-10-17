@@ -1,7 +1,7 @@
 import { getShuttleAlert } from '@/clients/mbta/alerts';
-import { getNextThreeArrivalTimes } from '@/clients/mbta/predictions';
+import { getArrivalPredictions } from '@/clients/mbta/predictions';
 import { getRouteData } from '@/clients/mbta/routes';
-import { getNextThreeScheduledDepartures } from '@/clients/mbta/schedules';
+import { getScheduledDepartures } from '@/clients/mbta/schedules';
 import { getStopData } from '@/clients/mbta/stops';
 import { usePolledData } from '@/hooks/usePolledData';
 import { useCallback } from 'react';
@@ -28,9 +28,7 @@ export function useTrainTimes({ stopId, directionIds, routeId }: Args) {
   const fetchLive = useCallback(async () => {
     const [arrivalLists, shuttleAlert] = await Promise.all([
       Promise.all(
-        directionIds.map((directionId) =>
-          getNextThreeArrivalTimes({ stopId, directionId, routeId }),
-        ),
+        directionIds.map((directionId) => getArrivalPredictions({ stopId, directionId, routeId })),
       ),
       getShuttleAlert({ stopId, routeId }),
     ]);
@@ -40,9 +38,7 @@ export function useTrainTimes({ stopId, directionIds, routeId }: Args) {
 
   const fetchSchedules = useCallback(async () => {
     const departures = await Promise.all(
-      directionIds.map((directionId) =>
-        getNextThreeScheduledDepartures({ stopId, directionId, routeId }),
-      ),
+      directionIds.map((directionId) => getScheduledDepartures({ stopId, directionId, routeId })),
     );
 
     return { scheduled: indexByDirectionId(directionIds, departures) };

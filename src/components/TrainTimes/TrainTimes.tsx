@@ -14,6 +14,7 @@ import {
 import { useEffect, useState } from 'react';
 import { BsExclamationTriangleFill } from 'react-icons/bs';
 import MBTAIcon from '@/assets/mbta/MBTAIcon';
+import type { TripTime } from '@/clients/mbta/predictions';
 import { NEUMORPHIC_RAISED_SUBTLE } from '@/theme';
 import { Figure } from '../Figure';
 import { WidgetCard } from '../WidgetCard';
@@ -165,21 +166,40 @@ function TrainTimeSlot({
   );
 }
 
+type Slot = { timeMs: number; arrivalIso?: string; scheduledIso?: string };
+
 export function existingSlots(
-  arrivalsForDirection: string[] | undefined,
-  departures: string[],
+  arrivalsForDirection: TripTime[] | undefined,
+  departures: TripTime[],
   now = Date.now(),
 ) {
-  const upcoming = (iso: string | undefined) =>
-    iso != null && new Date(iso).getTime() > now ? iso : undefined;
+  const arrivals = arrivalsForDirection ?? [];
+  const predictedTripIds = new Set(arrivals.map(({ tripId }) => tripId));
+  // A predicted train's scheduled time is already shown live. Hide every departure at that
+  // time, since parallel trips (e.g. shuttle variants) can share it.
+  const predictedScheduledTimes = new Set(
+    departures.filter(({ tripId }) => predictedTripIds.has(tripId)).map(({ time }) => time),
+  );
 
-  return [0, 1, 2]
-    .map((i) => ({
-      i,
-      arrivalIso: upcoming(arrivalsForDirection?.[i]),
-      scheduledIso: upcoming(departures[i]),
-    }))
-    .filter(({ arrivalIso, scheduledIso }) => arrivalIso != null || scheduledIso != null);
+  const live: Slot[] = arrivals.map(({ time }) => ({ timeMs: Date.parse(time), arrivalIso: time }));
+  const scheduled: Slot[] = departures
+    .filter(({ time }) => !predictedScheduledTimes.has(time))
+    .map(({ time }) => ({ timeMs: Date.parse(time), scheduledIso: time }));
+
+  // Stable sort keeps live slots ahead of scheduled ones at the same time, so dedupe keeps live.
+  const seenTimes = new Set<number>();
+  return [...live, ...scheduled]
+    .filter(({ timeMs }) => timeMs > now)
+    .sort((a, b) => a.timeMs - b.timeMs)
+    .filter(({ timeMs }) => {
+      if (seenTimes.has(timeMs)) {
+        return false;
+      }
+      seenTimes.add(timeMs);
+      return true;
+    })
+    .slice(0, 3)
+    .map(({ arrivalIso, scheduledIso }) => ({ arrivalIso, scheduledIso }));
 }
 
 type RouteData = NonNullable<ReturnType<typeof useTrainTimes>['route']>;
@@ -247,9 +267,10 @@ function TrainSlotsDisplay({
       {slots.length === 0 ? (
         <TrainTimeSlot figureSize={figureSize} now={now} />
       ) : (
-        slots.map(({ i, arrivalIso, scheduledIso }) => (
+        slots.map(({ arrivalIso, scheduledIso }, i) => (
           <TrainTimeSlot
-            key={arrivalIso ?? scheduledIso ?? i}
+            // Times aren't unique keys: duplicate keys leave stale slots behind on re-render.
+            key={i}
             arrivalIso={arrivalIso}
             scheduledIso={scheduledIso}
             figureSize={figureSize}
