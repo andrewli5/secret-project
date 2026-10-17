@@ -4,6 +4,14 @@ A personal dashboard SPA: a clock, the local weather (NWS), inbound MBTA Commute
 Rail times, and a Chinese word of the day. Built with React, TypeScript, Vite, and
 Mantine, and deployed to GitHub Pages.
 
+## Target device
+
+The dashboard runs on a **Samsung Galaxy Tab A9+** (11" Android tablet, 1920×1200
+display). It is touch-only, so:
+
+- Anything shown on hover (tooltips, hover states) also needs to work on tap.
+- Keep tap targets comfortably large.
+
 ## Scripts
 
 - `yarn dev` – start the development server
