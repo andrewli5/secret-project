@@ -10,7 +10,9 @@ import {
   Stack,
   Text,
   Tooltip,
+  UnstyledButton,
 } from '@mantine/core';
+import { useClickOutside } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
 import { BsExclamationTriangleFill } from 'react-icons/bs';
 import MBTAIcon from '@/assets/mbta/MBTAIcon';
@@ -166,6 +168,8 @@ function TrainTimeSlot({
   );
 }
 
+const DUPLICATE_WINDOW_MS = 60 * 1000;
+
 type Slot = { timeMs: number; arrivalIso?: string; scheduledIso?: string };
 
 export function existingSlots(
@@ -186,18 +190,20 @@ export function existingSlots(
     .filter(({ time }) => !predictedScheduledTimes.has(time))
     .map(({ time }) => ({ timeMs: Date.parse(time), scheduledIso: time }));
 
-  // Stable sort keeps live slots ahead of scheduled ones at the same time, so dedupe keeps live.
-  const seenTimes = new Set<number>();
-  return [...live, ...scheduled]
-    .filter(({ timeMs }) => timeMs > now)
+  // Parallel trips get predictions a few seconds apart, so times within a window are one
+  // departure. Live slots are claimed first so they win over scheduled ones.
+  const kept: Slot[] = [];
+  for (const slot of [...live, ...scheduled]) {
+    const isDuplicate = kept.some(
+      ({ timeMs }) => Math.abs(timeMs - slot.timeMs) < DUPLICATE_WINDOW_MS,
+    );
+    if (slot.timeMs > now && !isDuplicate) {
+      kept.push(slot);
+    }
+  }
+
+  return kept
     .sort((a, b) => a.timeMs - b.timeMs)
-    .filter(({ timeMs }) => {
-      if (seenTimes.has(timeMs)) {
-        return false;
-      }
-      seenTimes.add(timeMs);
-      return true;
-    })
     .slice(0, 3)
     .map(({ arrivalIso, scheduledIso }) => ({ arrivalIso, scheduledIso }));
 }
@@ -310,6 +316,30 @@ function TrainDirectionSection({
   );
 }
 
+function ServiceAlertIcon({ message }: { message: string }) {
+  const [opened, setOpened] = useState(false);
+  const ref = useClickOutside<HTMLButtonElement>(() => setOpened(false));
+
+  // Controlled so a tap toggles it; Mantine's hover trigger ignores touch.
+  return (
+    <Tooltip label={message} multiline w={280} withArrow opened={opened}>
+      <UnstyledButton
+        ref={ref}
+        display="inline-flex"
+        c="yellow.3"
+        aria-label="Service alert"
+        aria-expanded={opened}
+        onClick={() => setOpened((o) => !o)}
+        onPointerEnter={(e) => e.pointerType === 'mouse' && setOpened(true)}
+        onPointerLeave={(e) => e.pointerType === 'mouse' && setOpened(false)}
+        onKeyDown={(e) => e.key === 'Escape' && setOpened(false)}
+      >
+        <BsExclamationTriangleFill size={24} />
+      </UnstyledButton>
+    </Tooltip>
+  );
+}
+
 export function TrainTimes({ stopId, directionIds, routeId }: Props) {
   const { stop, route, arrivals, scheduled, shuttleAlert, error } = useTrainTimes({
     stopId,
@@ -325,21 +355,7 @@ export function TrainTimes({ stopId, directionIds, routeId }: Props) {
       titleBg={`#${route?.color}`}
       c={`#${route?.text_color}`}
       icon={<MBTAIcon />}
-      rightIcon={
-        shuttleAlert ? (
-          <Tooltip label={shuttleAlert} multiline w={280} withArrow>
-            <Box
-              component="span"
-              display="inline-flex"
-              c="yellow.3"
-              aria-label="Service alert"
-              tabIndex={0}
-            >
-              <BsExclamationTriangleFill size={24} />
-            </Box>
-          </Tooltip>
-        ) : undefined
-      }
+      rightIcon={shuttleAlert ? <ServiceAlertIcon message={shuttleAlert} /> : undefined}
     >
       <Card.Section px="xs" pt="xs">
         <Stack gap={2}>

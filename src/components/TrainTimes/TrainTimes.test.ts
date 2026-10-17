@@ -1,5 +1,5 @@
 import { MantineProvider } from '@mantine/core';
-import { act, render, renderHook, screen } from '@testing-library/react';
+import { act, fireEvent, render, renderHook, screen, waitFor } from '@testing-library/react';
 import { createElement } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { usePolledData } from '@/hooks/usePolledData';
@@ -87,6 +87,31 @@ describe('existingSlots', () => {
     ]);
   });
 
+  it('shows parallel trips predicted seconds apart once', () => {
+    // Shuttle variants share a schedule slot and get predictions a second apart.
+    const scheduled = '2026-06-27T12:24:00Z';
+    const next = '2026-06-27T14:24:00Z';
+
+    expect(
+      existingSlots(
+        [trip('2026-06-27T12:23:49Z', 'local'), trip('2026-06-27T12:23:50Z', 'express')],
+        [trip(scheduled, 'local'), trip(scheduled, 'express'), trip(next)],
+        now,
+      ),
+    ).toEqual([
+      { arrivalIso: '2026-06-27T12:23:49Z', scheduledIso: undefined },
+      { arrivalIso: undefined, scheduledIso: next },
+    ]);
+  });
+
+  it('keeps the live slot over a nearby unpredicted scheduled time', () => {
+    const arrival = '2026-06-27T12:10:30Z';
+
+    expect(existingSlots([trip(arrival, 'a')], [trip('2026-06-27T12:10:00Z', 'b')], now)).toEqual([
+      { arrivalIso: arrival, scheduledIso: undefined },
+    ]);
+  });
+
   it('caps at three slots in time order', () => {
     const t = (m: number) => `2026-06-27T12:${String(m).padStart(2, '0')}:00Z`;
 
@@ -158,6 +183,36 @@ describe('TrainTimes', () => {
 
     expect(screen.queryByText('live')).not.toBeInTheDocument();
     expect(screen.getByText('no trains')).toBeInTheDocument();
+  });
+
+  it('opens the service alert message on tap and closes on a second tap', async () => {
+    vi.mocked(useTrainTimes).mockReturnValue({
+      ...trainData,
+      arrivals: { 0: [] },
+      shuttleAlert: 'Shuttle buses replace trains this weekend.',
+    });
+
+    render(
+      createElement(
+        MantineProvider,
+        { env: 'test' },
+        createElement(TrainTimes, { stopId: 'stop', directionIds: [0], routeId: 'route' }),
+      ),
+    );
+    const icon = screen.getByRole('button', { name: 'Service alert' });
+    expect(
+      screen.queryByText('Shuttle buses replace trains this weekend.'),
+    ).not.toBeInTheDocument();
+
+    fireEvent.click(icon);
+    expect(await screen.findByText('Shuttle buses replace trains this weekend.')).toBeVisible();
+
+    fireEvent.click(icon);
+    await waitFor(() =>
+      expect(
+        screen.queryByText('Shuttle buses replace trains this weekend.'),
+      ).not.toBeInTheDocument(),
+    );
   });
 
   it('clears trips that share a departure time once it passes', () => {
