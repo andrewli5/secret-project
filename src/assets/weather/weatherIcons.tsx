@@ -102,9 +102,16 @@ type Props = {
   isDay: boolean;
   size?: number;
   animated?: boolean;
+  alt?: string;
 };
 
-export function WeatherIcon({ code, isDay, size = 64, animated = true }: Props): JSX.Element {
+export function WeatherIcon({
+  code,
+  isDay,
+  size = 64,
+  animated = true,
+  alt = 'weather icon',
+}: Props): JSX.Element {
   const src = resolveIcon(code, isDay, animated);
-  return <img src={src} width={size} height={size} alt="weather icon" />;
+  return <img src={src} width={size} height={size} alt={alt} />;
 }

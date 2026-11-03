@@ -1,5 +1,7 @@
 import { Box, Divider, Group, Stack, Text } from '@mantine/core';
-import { useEffect, useState } from 'react';
+import { type ComponentType, useEffect, useState } from 'react';
+import { useThemed } from '@/hooks/useUiTheme';
+import type { UiTheme } from '@/uiTheme';
 import { Figure } from '../Figure';
 import { WidgetCard } from '../WidgetCard';
 
@@ -16,7 +18,7 @@ export const weekDatesFor = (date: Date): number[] =>
 
 type DayCellProps = { label: string; date: number; isToday: boolean };
 
-const DayCell = ({ label, date, isToday }: DayCellProps) => (
+const RoundDayCell = ({ label, date, isToday }: DayCellProps) => (
   <Stack align="center" gap={2} flex={1}>
     <Text size="sm" c={isToday ? undefined : 'dimmed'}>
       {label}
@@ -41,6 +43,41 @@ const DayCell = ({ label, date, isToday }: DayCellProps) => (
   </Stack>
 );
 
+// A flat square cell; today is a pressed key (styles/retro.css), not a tappable-looking picker.
+const SquareDayCell = ({ label, date, isToday }: DayCellProps) => (
+  <Stack align="center" gap={2} flex={1} className="retro-day" mod={{ today: isToday }}>
+    <Text size="sm" c={isToday ? undefined : 'dimmed'}>
+      {label}
+    </Text>
+    <Text
+      size="lg"
+      ta="center"
+      lh="1.5rem"
+      fw={isToday ? 600 : 400}
+      style={{ fontVariantNumeric: 'tabular-nums' }}
+    >
+      {date}
+    </Text>
+  </Stack>
+);
+
+const DAY_CELLS: Record<UiTheme, ComponentType<DayCellProps>> = {
+  neumorphic: RoundDayCell,
+  retro: SquareDayCell,
+};
+
+// Retro's yellow field already sets the time apart, and the strip needs the height.
+const RULES: Record<UiTheme, ComponentType | null> = {
+  neumorphic: () => <Divider w="100%" />,
+  retro: null,
+};
+
+// Retro lines the date and time up on the left edge, like the weather window below.
+const ALIGNMENTS: Record<UiTheme, 'center' | 'flex-start'> = {
+  neumorphic: 'center',
+  retro: 'flex-start',
+};
+
 export const Clock = () => {
   const [time, setTime] = useState(new Date());
 
@@ -51,6 +88,9 @@ export const Clock = () => {
     return () => clearInterval(intervalId);
   }, []);
 
+  const DayCell = useThemed(DAY_CELLS);
+  const Rule = useThemed(RULES);
+  const align = useThemed(ALIGNMENTS);
   const weekDates = weekDatesFor(time);
   const today = time.getDay();
 
@@ -62,8 +102,8 @@ export const Clock = () => {
   const formatTwoDigits = (n: number) => n.toString().padStart(2, '0');
 
   return (
-    <WidgetCard p="xs">
-      <Stack align="center" gap={10}>
+    <WidgetCard p="xs" windowTitle="Clock" surface="highlight">
+      <Stack align={align} gap={10}>
         <Text size="2.5rem">
           {time.toLocaleDateString(undefined, {
             weekday: 'long',
@@ -71,16 +111,17 @@ export const Clock = () => {
             day: 'numeric',
           })}
         </Text>
-        <Divider w="100%" />
+        {Rule && <Rule />}
         <Group gap={0} align="baseline" wrap="nowrap">
           <Figure
             figure={`${displayHours}:${formatTwoDigits(minutes)}`}
             unit={isPM ? 'PM' : 'AM'}
             unitSize="3.25rem"
             size="10rem"
+            kind="hero"
           />
         </Group>
-        <Divider w="100%" />
+        {Rule && <Rule />}
         <Group gap={6} justify="center" w="100%">
           {WEEKDAYS.map((day, i) => (
             <DayCell key={day} label={day} date={weekDates[i]} isToday={i === today} />

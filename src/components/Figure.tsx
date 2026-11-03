@@ -1,5 +1,10 @@
 import { Text } from '@mantine/core';
-import { GEIST_FONT } from '@/theme';
+import { useThemed } from '@/hooks/useUiTheme';
+import { useInlineFonts } from '@/themeFonts';
+import type { UiTheme } from '@/uiTheme';
+
+// hero: the clock and temperature. ticking: figures that change every second.
+type FigureKind = 'hero' | 'ticking' | 'value';
 
 type Props = {
   figure?: string;
@@ -8,17 +13,27 @@ type Props = {
   unitSize?: string;
   my?: string | number;
   fw?: number;
+  kind?: FigureKind;
 };
 
-export const Figure = ({ figure, unit, size, unitSize, my, fw }: Props) => {
+const FIGURE_CLASS: Record<UiTheme, (kind: FigureKind) => string | undefined> = {
+  neumorphic: () => undefined,
+  retro: (kind) => `retro-figure retro-figure-${kind}`,
+};
+
+export const Figure = ({ figure, unit, size, unitSize, my, fw, kind = 'value' }: Props) => {
+  const { geist } = useInlineFonts();
+  const className = useThemed(FIGURE_CLASS)(kind);
+
   return (
     <Text
       size={size}
       fw={fw}
       my={my}
       c={figure ? undefined : 'dimmed'}
+      className={className}
       style={{
-        fontFamily: GEIST_FONT,
+        fontFamily: geist,
         whiteSpace: 'nowrap',
         fontVariantNumeric: 'tabular-nums',
       }}
@@ -29,7 +44,8 @@ export const Figure = ({ figure, unit, size, unitSize, my, fw }: Props) => {
           span
           size={unitSize ?? 'md'}
           c="dimmed"
-          style={{ fontFamily: GEIST_FONT, fontVariantNumeric: 'tabular-nums' }}
+          className={className && 'retro-figure-unit'}
+          style={{ fontFamily: geist, fontVariantNumeric: 'tabular-nums' }}
         >
           {` ${unit}`}
         </Text>
