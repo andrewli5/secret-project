@@ -16,9 +16,12 @@
   },
   "dependencies": {
     "@bybas/weather-icons": "^2.0.0",
+    "@fontsource/dejavu-sans": "^5.3.0",
     "@fontsource/geist": "^5.2.8",
+    "@fontsource/host-grotesk": "^5.3.0",
     "@mantine/core": "8.3.13",
     "@mantine/hooks": "8.3.13",
+    "dseg": "^0.46.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-icons": "^5.5.0",

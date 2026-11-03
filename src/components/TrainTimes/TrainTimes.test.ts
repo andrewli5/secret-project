@@ -1,8 +1,10 @@
-import { MantineProvider } from '@mantine/core';
+import { MantineProvider, type MantineProviderProps } from '@mantine/core';
 import { act, fireEvent, render, renderHook, screen, waitFor } from '@testing-library/react';
 import { createElement } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { usePolledData } from '@/hooks/usePolledData';
+import { UiThemeContext } from '@/hooks/useUiTheme';
+import type { UiTheme } from '@/uiTheme';
 import { existingSlots, TrainTimes } from './TrainTimes';
 import { useTrainTimes } from './useTrainTimes';
 
@@ -28,6 +30,25 @@ const trainData = {
 };
 
 const trip = (time: string, tripId = time) => ({ time, tripId });
+
+const UI_THEMES: UiTheme[] = ['neumorphic', 'retro'];
+
+const ALERT = 'Shuttle buses replace trains this weekend.';
+
+function trainTimesIn(
+  uiTheme: UiTheme,
+  providerProps: Partial<MantineProviderProps> | null = null,
+) {
+  return createElement(
+    UiThemeContext.Provider,
+    { value: uiTheme },
+    createElement(
+      MantineProvider,
+      providerProps,
+      createElement(TrainTimes, { stopId: 'stop', directionIds: [0], routeId: 'route' }),
+    ),
+  );
+}
 
 describe('existingSlots', () => {
   const now = Date.parse('2026-06-27T12:00:00Z');
@@ -125,7 +146,7 @@ describe('existingSlots', () => {
   });
 });
 
-describe('TrainTimes', () => {
+describe.each(UI_THEMES)('TrainTimes (%s theme)', (uiTheme) => {
   it('ticks every second and shows new predictions without a refresh', () => {
     vi.useFakeTimers();
     const now = new Date('2026-06-27T12:00:00Z');
@@ -135,13 +156,7 @@ describe('TrainTimes', () => {
       arrivals: { 0: [trip(new Date(now.getTime() + 602_000).toISOString())] },
     });
 
-    const view = render(
-      createElement(
-        MantineProvider,
-        null,
-        createElement(TrainTimes, { stopId: 'stop', directionIds: [0], routeId: 'route' }),
-      ),
-    );
+    const view = render(trainTimesIn(uiTheme));
     expect(screen.getByText('02')).toBeInTheDocument();
 
     act(() => vi.advanceTimersByTime(1000));
@@ -151,13 +166,7 @@ describe('TrainTimes', () => {
       ...trainData,
       arrivals: { 0: [trip(new Date(now.getTime() + 620_000).toISOString())] },
     });
-    view.rerender(
-      createElement(
-        MantineProvider,
-        null,
-        createElement(TrainTimes, { stopId: 'stop', directionIds: [0], routeId: 'route' }),
-      ),
-    );
+    view.rerender(trainTimesIn(uiTheme));
     expect(screen.getByText('19')).toBeInTheDocument();
   });
 
@@ -170,49 +179,13 @@ describe('TrainTimes', () => {
       arrivals: { 0: [trip(new Date(now.getTime() + 500).toISOString())] },
     });
 
-    render(
-      createElement(
-        MantineProvider,
-        null,
-        createElement(TrainTimes, { stopId: 'stop', directionIds: [0], routeId: 'route' }),
-      ),
-    );
+    render(trainTimesIn(uiTheme));
     expect(screen.getByText('live')).toBeInTheDocument();
 
     act(() => vi.advanceTimersByTime(1000));
 
     expect(screen.queryByText('live')).not.toBeInTheDocument();
     expect(screen.getByText('no trains')).toBeInTheDocument();
-  });
-
-  it('opens the service alert message on tap and closes on a second tap', async () => {
-    vi.mocked(useTrainTimes).mockReturnValue({
-      ...trainData,
-      arrivals: { 0: [] },
-      shuttleAlert: 'Shuttle buses replace trains this weekend.',
-    });
-
-    render(
-      createElement(
-        MantineProvider,
-        { env: 'test' },
-        createElement(TrainTimes, { stopId: 'stop', directionIds: [0], routeId: 'route' }),
-      ),
-    );
-    const icon = screen.getByRole('button', { name: 'Service alert' });
-    expect(
-      screen.queryByText('Shuttle buses replace trains this weekend.'),
-    ).not.toBeInTheDocument();
-
-    fireEvent.click(icon);
-    expect(await screen.findByText('Shuttle buses replace trains this weekend.')).toBeVisible();
-
-    fireEvent.click(icon);
-    await waitFor(() =>
-      expect(
-        screen.queryByText('Shuttle buses replace trains this weekend.'),
-      ).not.toBeInTheDocument(),
-    );
   });
 
   it('clears trips that share a departure time once it passes', () => {
@@ -227,17 +200,64 @@ describe('TrainTimes', () => {
       scheduled: { 0: [trip(shared, 'local'), trip(shared, 'express'), trip(later)] },
     });
 
-    render(
-      createElement(
-        MantineProvider,
-        null,
-        createElement(TrainTimes, { stopId: 'stop', directionIds: [0], routeId: 'route' }),
-      ),
-    );
+    render(trainTimesIn(uiTheme));
     expect(screen.getAllByText('scheduled')).toHaveLength(2);
 
     act(() => vi.advanceTimersByTime(1000));
     expect(screen.getAllByText('scheduled')).toHaveLength(1);
+  });
+
+  describe('service alert', () => {
+    const renderWithAlert = () => {
+      vi.mocked(useTrainTimes).mockReturnValue({
+        ...trainData,
+        arrivals: { 0: [] },
+        shuttleAlert: ALERT,
+      });
+      render(trainTimesIn(uiTheme, { env: 'test' }));
+      return screen.getByRole('button', { name: 'Service alert' });
+    };
+
+    it('opens the service alert message on tap and closes on a second tap', async () => {
+      const icon = renderWithAlert();
+      expect(screen.queryByText(ALERT)).not.toBeInTheDocument();
+
+      fireEvent.click(icon);
+      expect(await screen.findByText(ALERT)).toBeVisible();
+      expect(icon).toHaveAttribute('aria-expanded', 'true');
+
+      fireEvent.click(icon);
+      await waitFor(() => expect(screen.queryByText(ALERT)).not.toBeInTheDocument());
+      expect(icon).toHaveAttribute('aria-expanded', 'false');
+    });
+
+    it('closes on a press outside the button', async () => {
+      const icon = renderWithAlert();
+      fireEvent.click(icon);
+      expect(await screen.findByText(ALERT)).toBeVisible();
+
+      fireEvent.mouseDown(document.body);
+      await waitFor(() => expect(screen.queryByText(ALERT)).not.toBeInTheDocument());
+    });
+
+    it('closes on Escape', async () => {
+      const icon = renderWithAlert();
+      fireEvent.click(icon);
+      expect(await screen.findByText(ALERT)).toBeVisible();
+
+      fireEvent.keyDown(icon, { key: 'Escape' });
+      await waitFor(() => expect(screen.queryByText(ALERT)).not.toBeInTheDocument());
+    });
+
+    it('opens when a mouse pointer enters, but not a touch', async () => {
+      const icon = renderWithAlert();
+
+      fireEvent.pointerEnter(icon, { pointerType: 'touch' });
+      expect(screen.queryByText(ALERT)).not.toBeInTheDocument();
+
+      fireEvent.pointerEnter(icon, { pointerType: 'mouse' });
+      expect(await screen.findByText(ALERT)).toBeVisible();
+    });
   });
 });
 

@@ -1,0 +1,434 @@
+/* Retro theme. Every rule is scoped under :root[data-ui-theme='retro'] (set in main.tsx), so it
+   can't leak into the neumorphic theme and outranks Mantine's own class rules. The one exception is
+   the theme selector, which is always retro and scoped to its own panel (.retro-selector) instead.
+   Mantine color variables are set by the retro cssVariablesResolver (retroTheme.ts). Edges, offsets
+   and insets stay in whole px so they stay crisp at the tablet's 1.5 device pixel ratio. */
+
+:root[data-ui-theme="retro"],
+.retro-selector {
+  --dp-color-window: #d4d4d4;
+  --dp-color-ink: #000;
+  --dp-color-bevel-dark: #808080;
+  --dp-color-bevel-light: #fff;
+  --dp-color-accent: #60f;
+  --dp-color-highlight: #ff0;
+  --dp-color-link-hover: #00f;
+  --dp-color-desktop: #008080;
+  --dp-color-emphasis: #ff00b8;
+  --dp-color-titlebar: #000080;
+  --dp-typography-interface: "Retro Interface", sans-serif;
+  --dp-typography-display: "Retro Display", sans-serif;
+  --dp-typography-mono: "Retro Mono", monospace;
+  --dp-typography-body: 1rem;
+  --dp-typography-supporting: 0.9375rem;
+  --dp-typography-label: 0.75rem;
+  --dp-typography-body-leading: 1.4;
+  --dp-spacing-pane-inset: 5px;
+  --dp-spacing-item-gap: 10px;
+  --dp-radius-control: 0;
+  --dp-border-frame: 2px;
+  --dp-border-rule: 1px;
+  --dp-motion-ticker-cycle: 1s;
+
+  --retro-raised: var(--dp-color-bevel-light) var(--dp-color-bevel-dark) var(--dp-color-bevel-dark)
+    var(--dp-color-bevel-light);
+  --retro-sunken: var(--dp-color-bevel-dark) var(--dp-color-bevel-light) var(--dp-color-bevel-light)
+    var(--dp-color-bevel-dark);
+  --retro-offset: 4px 4px 0 var(--dp-color-ink);
+  --retro-titlebar-height: max(48px, 3rem);
+  --retro-typography-figures: "Retro Figures", monospace;
+
+  /* Never fake a bold or italic: each face is used only at the weights it ships. */
+  font-synthesis: none;
+}
+
+/* Desktop: a 4px tile of 2px checker cells (3 device px at DPR 1.5, so it stays crisp). */
+:root[data-ui-theme="retro"] .retro-desktop {
+  background-color: #b8b8b8;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' shape-rendering='crispEdges'%3E%3Cpath fill='%23a4a4a4' d='M0 0h2v2H0zM2 2h2v2H2z'/%3E%3C/svg%3E");
+  background-size: 4px 4px;
+}
+
+/* Windows */
+:root[data-ui-theme="retro"] .retro-window {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 3px;
+  min-width: 0;
+  color: var(--dp-color-ink);
+  background: var(--dp-color-window);
+  border: var(--dp-border-frame) solid;
+  border-color: var(--retro-raised);
+  box-shadow: var(--retro-offset);
+}
+
+:root[data-ui-theme="retro"] .retro-titlebar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  height: var(--retro-titlebar-height);
+  padding: 0 4px 0 10px;
+  color: var(--dp-color-bevel-light);
+  background: var(--dp-color-titlebar);
+}
+
+:root[data-ui-theme="retro"] .retro-titlebar-caption {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+:root[data-ui-theme="retro"] .retro-caption {
+  font-family: var(--dp-typography-display);
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: inherit;
+}
+
+:root[data-ui-theme="retro"] .retro-window-body {
+  --card-padding: 0px;
+
+  container-type: inline-size;
+  flex: 1 1 auto;
+  padding: 8px;
+}
+
+/* Reading areas get a roomier, even inset than the window face. */
+:root[data-ui-theme="retro"] .retro-window-body[data-surface="well"],
+:root[data-ui-theme="retro"] .retro-window-body[data-surface="highlight"] {
+  padding: 14px;
+}
+
+:root[data-ui-theme="retro"] .retro-window-body {
+  color: var(--dp-color-ink);
+  background: transparent;
+}
+
+:root[data-ui-theme="retro"] .retro-window-body[data-surface="well"],
+:root[data-ui-theme="retro"] .retro-well {
+  color: var(--dp-color-ink);
+  background: var(--dp-color-bevel-light);
+  border: var(--dp-border-frame) solid;
+  border-color: var(--retro-sunken);
+}
+
+/* The clock's "launch window": a flat yellow field. */
+:root[data-ui-theme="retro"] .retro-window-body[data-surface="highlight"] {
+  background: var(--dp-color-highlight);
+  border: var(--dp-border-rule) solid var(--dp-color-ink);
+}
+
+:root[data-ui-theme="retro"] .mantine-Divider-root {
+  --divider-color: var(--dp-color-ink);
+}
+
+/* Figures: alarm-clock 7-segment digits; their units stay in the letter face. */
+:root[data-ui-theme="retro"] .retro-figure {
+  font-family: var(--retro-typography-figures);
+}
+
+:root[data-ui-theme="retro"] .retro-figure-unit {
+  font-family: var(--dp-typography-interface);
+}
+
+/* The line box hugs the digits. */
+:root[data-ui-theme="retro"] .retro-figure-hero {
+  line-height: 0.8;
+}
+
+:root[data-ui-theme="retro"] .retro-figure-hero,
+:root[data-ui-theme="retro"] .retro-figure-value {
+  text-transform: uppercase;
+}
+
+/* Below 880px the rem stops scaling with width (index.html), so hero figures scale with their
+   window instead; "12:59 PM" needs about 32% of the window per 10rem. */
+@media (max-width: 879px) {
+  :root[data-ui-theme="retro"] .retro-figure-hero {
+    font-size: min(var(--text-fz), 32cqi);
+  }
+
+  :root[data-ui-theme="retro"] .retro-figure-hero .retro-figure-unit {
+    font-size: min(var(--text-fz), 10.4cqi);
+  }
+}
+
+/* Clock week strip: flat cells; today is a purple pressed key. */
+:root[data-ui-theme="retro"] .retro-day {
+  padding: 2px 0;
+  border: var(--dp-border-frame) solid transparent;
+}
+
+:root[data-ui-theme="retro"] .retro-day[data-today] {
+  color: var(--dp-color-bevel-light);
+  background: var(--dp-color-accent);
+  border-color: var(--dp-color-ink) var(--dp-color-bevel-light) var(--dp-color-bevel-light)
+    var(--dp-color-ink);
+}
+
+/* Weather */
+:root[data-ui-theme="retro"] .retro-picture {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: var(--dp-color-desktop);
+  border: var(--dp-border-frame) solid;
+  border-color: var(--retro-sunken);
+}
+
+:root[data-ui-theme="retro"] .retro-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--dp-typography-mono);
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  color: var(--dp-color-ink);
+}
+
+:root[data-ui-theme="retro"] .retro-swatch {
+  flex: none;
+  width: 12px;
+  height: 12px;
+  border: var(--dp-border-rule) solid var(--dp-color-ink);
+}
+
+:root[data-ui-theme="retro"] .retro-swatch[data-color="violet"] {
+  background: var(--dp-color-accent);
+}
+
+:root[data-ui-theme="retro"] .retro-swatch[data-color="red"] {
+  background: #c00;
+}
+
+:root[data-ui-theme="retro"] .retro-swatch[data-color="blue"] {
+  background: #00f;
+}
+
+/* Train times */
+/* Equal slots that wrap rather than squeeze their figures on narrow screens. */
+:root[data-ui-theme="retro"] .retro-slots > * {
+  flex: 1 1 0;
+}
+
+:root[data-ui-theme="retro"] .retro-status {
+  --badge-lh: 20px;
+
+  height: auto;
+  padding: 1px 8px;
+  font-family: var(--dp-typography-mono);
+  color: var(--dp-color-ink);
+  background: transparent;
+  border: var(--dp-border-rule) solid var(--dp-color-ink);
+}
+
+:root[data-ui-theme="retro"] .retro-status[data-mode="live"] {
+  background: var(--dp-color-highlight);
+}
+
+@keyframes retro-ticker {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(4px);
+  }
+}
+
+/* Two steps per cycle; the "live" text beside it stays still. */
+:root[data-ui-theme="retro"] .retro-ticker {
+  display: block;
+  width: 0;
+  height: 0;
+  margin-right: 4px;
+  border-color: transparent transparent transparent var(--dp-color-ink);
+  border-style: solid;
+  border-width: 5px 0 5px 7px;
+  animation: retro-ticker var(--dp-motion-ticker-cycle) steps(2, jump-none) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root[data-ui-theme="retro"] .retro-ticker {
+    animation: none;
+  }
+}
+
+/* Service alert: a raised grey key inside a 48px hit area that stays within the title bar. */
+:root[data-ui-theme="retro"] .retro-key {
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  color: var(--dp-color-ink);
+}
+
+:root[data-ui-theme="retro"] .retro-key-face {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  background: var(--dp-color-window);
+  border: var(--dp-border-frame) solid;
+  border-color: var(--dp-color-bevel-light) var(--dp-color-ink) var(--dp-color-ink)
+    var(--dp-color-bevel-light);
+}
+
+:root[data-ui-theme="retro"] .retro-key:active .retro-key-face,
+:root[data-ui-theme="retro"] .retro-key[aria-expanded="true"] .retro-key-face {
+  border-color: var(--dp-color-ink) var(--dp-color-bevel-light) var(--dp-color-bevel-light)
+    var(--dp-color-ink);
+  transform: translate(1px, 1px);
+}
+
+:root[data-ui-theme="retro"] .retro-key:focus-visible {
+  outline: none;
+}
+
+:root[data-ui-theme="retro"] .retro-key:focus-visible .retro-key-face {
+  outline: 2px solid var(--dp-color-bevel-light);
+  outline-offset: 2px;
+}
+
+:root[data-ui-theme="retro"] .retro-key:focus-visible .retro-key-face::after {
+  position: absolute;
+  inset: 3px;
+  content: "";
+  border: var(--dp-border-rule) dotted var(--dp-color-ink);
+}
+
+:root[data-ui-theme="retro"] .retro-tooltip {
+  padding: 8px 10px;
+  font-family: var(--dp-typography-interface);
+  font-size: max(1rem, 16px);
+  line-height: var(--dp-typography-body-leading);
+  color: var(--dp-color-ink);
+  background: var(--dp-color-highlight);
+  border: var(--dp-border-rule) solid var(--dp-color-ink);
+  box-shadow: var(--retro-offset);
+}
+
+/* Theme selector: always retro, whichever theme is active. It takes the tokens from the first rule,
+   its list renders inside the panel, and it overrides what Mantine's dark scheme would give it under
+   the neumorphic theme (fonts, radius, colors, option hover). A small raised panel holds a classic
+   combo box (a sunken field and a raised arrow key), with a square list that marks the highlighted
+   option in title-bar navy. */
+.retro-selector {
+  padding: 8px 10px 10px;
+  font-family: var(--dp-typography-interface);
+  color: var(--dp-color-ink);
+  background: var(--dp-color-window);
+  border: var(--dp-border-frame) solid;
+  border-color: var(--retro-raised);
+  border-radius: 0;
+  box-shadow: var(--retro-offset);
+}
+
+/* A thin bar inside the panel's bottom edge that runs down to the fade-out (2px: whole device pixels
+   at 1.5x). Under reduced motion it steps once a second instead of gliding. */
+@keyframes retro-countdown {
+  from {
+    transform: scaleX(1);
+  }
+
+  to {
+    transform: scaleX(0);
+  }
+}
+
+.retro-selector .retro-selector-countdown {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--dp-color-titlebar);
+  transform-origin: left;
+}
+
+.retro-selector .retro-selector-countdown[data-counting] {
+  animation: retro-countdown linear forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .retro-selector .retro-selector-countdown[data-counting] {
+    animation-timing-function: steps(5, end);
+  }
+}
+
+.retro-selector .retro-selector-label {
+  font-family: var(--dp-typography-mono);
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  color: var(--dp-color-ink);
+}
+
+.retro-selector .retro-select-input {
+  min-height: 48px;
+  font-family: var(--dp-typography-interface);
+  color: var(--dp-color-ink);
+  background: var(--dp-color-bevel-light);
+  border: var(--dp-border-frame) solid;
+  border-color: var(--retro-sunken);
+  border-radius: 0;
+  transition: none;
+}
+
+.retro-selector .retro-select-input:focus-visible {
+  outline: var(--dp-border-rule) dotted var(--dp-color-ink);
+  outline-offset: -5px;
+}
+
+.retro-selector .retro-select-arrow {
+  top: 2px;
+  bottom: 2px;
+  inset-inline-end: 2px;
+  width: 40px;
+  color: var(--dp-color-ink);
+  background: var(--dp-color-window);
+  border: var(--dp-border-frame) solid;
+  border-color: var(--retro-raised);
+  border-radius: 0;
+}
+
+.retro-selector .retro-select-dropdown {
+  padding: 2px;
+  color: var(--dp-color-ink);
+  background: var(--dp-color-bevel-light);
+  border: var(--dp-border-rule) solid var(--dp-color-ink);
+  border-radius: 0;
+  box-shadow: var(--retro-offset);
+}
+
+.retro-selector .retro-select-option {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  color: var(--dp-color-ink);
+  border-radius: 0;
+}
+
+.retro-selector .retro-select-option[data-combobox-selected] {
+  color: var(--dp-color-bevel-light);
+  background: var(--dp-color-titlebar);
+}
+
+@media (hover: hover) {
+  .retro-selector .retro-select-option:hover {
+    color: var(--dp-color-bevel-light);
+    background: var(--dp-color-titlebar);
+  }
+}
